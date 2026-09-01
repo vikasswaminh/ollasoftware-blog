@@ -7,13 +7,25 @@
 SUMMARY OF WORK COMPLETED:
 --------------------------------------------------------------------------------
 
-1. TOP NAVIGATION HEADER & NETWORKERS HOME TOPOLOGY ALIGNMENT
+1. BRAND LOGO SIZE ENHANCEMENT
+   - Increased navigation bar logo image height to 68px (up from 46px/56px).
+   - Increased brand typography font size for 'ollasoftware' and 'blog' to 1.95rem (up from 1.58rem).
+   - Made the building icon vector and brand title significantly larger, sharper, and more prominent across all pages.
+
+2. INTRO SPLASH LOADER SCREEN (SplashLoader.astro)
+   - Re-enabled animated intro splash screen for:
+     1) Initial site opening / visit.
+     2) Page reloads / refreshes (F5 / Cmd+R).
+     3) Direct taps/clicks on the top-left OllaSoftware brand logo.
+   - Configured smooth 950ms presentation with building logo bounce animation, pulse loader dots, and fade-out transition.
+
+3. TOP NAVIGATION HEADER & NETWORKERS HOME TOPOLOGY ALIGNMENT
    - Updated site header width to stretch edge-to-edge across wide viewports.
    - Expanded container max-width to 1560px with 2.25rem padding.
    - Positioned OllaSoftware Brand Logo on far-left screen edge and primary navigation links on far-right screen edge, matching Networkers Home (networkershome.com) design topology.
    - Added fully responsive mobile hamburger menu button and sliding drawer overlay for screens <= 768px.
 
-2. ANIMATED SEARCH COMPONENT INTEGRATION (AnimatedSearch.astro)
+4. ANIMATED SEARCH COMPONENT INTEGRATION (AnimatedSearch.astro)
    - Created custom AnimatedSearch component featuring morphing pill, SVG gooey filter effects, and animated search icon.
    - Applied high-contrast, visible light grayish-blue pill theme (#e2e8f0) with dark slate text (#1e293b) and vibrant blue search circle (#2563eb).
    - Fixed active/tapped background state so search bar container remains solid and visible against white navigation bar.
@@ -21,34 +33,27 @@ SUMMARY OF WORK COMPLETED:
    - Responsive breakpoints optimized for all mobile screens (768px & 480px).
    - Conditional rendering: Search bar displays strictly on Blog routes (/ and /blog/...), and is automatically hidden on /about and /tags pages.
 
-3. REAL-TIME ARTICLE FILTERING & SEARCH EXECUTION
+5. REAL-TIME ARTICLE FILTERING & SEARCH EXECUTION
    - Connected top search bar directly to page article cards via custom 'blog-search' events.
-   - Removed floating dropdown listbox under search bar to allow inline card filtering.
    - Enhanced index.astro filtering logic so typing or pressing Enter immediately renders all matching post cards in the 3-column grid view.
    - Added smooth scrolling to #pieces on Enter press.
    - Implemented URL query parameter support (?q=...) for cross-page deep linking.
 
-4. HOMEPAGE & SINGLE BLOG POST HERO OVERHAUL
-   - Removed redundant homepage hero block (title, tagline, search bar, and popular topic chips) from index.astro for a cleaner, modern layout.
-   - Standardized hero section background across Tags Hub (/tags) and single Blog Posts using /hero-bg.png blueprint grid overlay.
-   - Applied custom Lato font typography and clean pill filters.
-
-5. COMPLETE TAG SUITE ARCHITECTURE (/tags/[tag].astro)
+6. COMPLETE TAG SUITE ARCHITECTURE (/tags/[tag].astro)
    - Built comprehensive topic pages with definition hero cards ("What is #[tag]?").
    - Added stats toolbar (total articles, estimated reading time).
    - Integrated sibling tag chips and contextual product callout banners (QuickSDWAN, Aeoniti, Crawlcrawl, Ollima, Networkers Home).
    - Added client-side article sorting buttons (Most Recent, Longest Read, Quickest Read).
 
-6. TYPOGRAPHY & BRAND FAVICON STANDARDIZATION
+7. TYPOGRAPHY & BRAND FAVICON STANDARDIZATION
    - Styled all inline article links (.prose a, .sec p a) in vibrant #2563eb blue with crisp 1.5px underline and royal blue hover state.
    - Replaced browser tab target icon with official OllaSoftware Building Logo favicon.
-   - Updated Splash Loader logo to 2D cyan/blue building vector (/splash-logo.png) at 150px height, configured to trigger strictly when tapping the top-left brand logo.
 
-7. BUILD & GIT VERIFICATION
+8. BUILD & GIT VERIFICATION
    - Verified 108 static routes compiling cleanly with 0 errors via 'npm run build'.
    - Committed and pushed all production updates to GitHub repository (origin/main).
 
 ================================================================================
-Report Generated: 2026-09-01 17:49 IST
+Report Generated: 2026-09-01 17:57 IST
 File Location: ~/Downloads/OllaSoftware_Blog_Daily_Report_2026_09_01.txt
 ================================================================================
