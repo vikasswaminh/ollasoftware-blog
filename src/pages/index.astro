@@ -424,9 +424,25 @@ const remainingPosts = enhancedPosts.slice(1);
 
     let activeFilter = 'all';
     let activeTopic = 'all'; // real content tag from post.tags
+    let headerSearchQuery = '';
+
+    // Listen for top nav header AnimatedSearch real-time typing events
+    window.addEventListener('blog-search', (e) => {
+      headerSearchQuery = (e.detail?.query || '').trim().toLowerCase();
+      applyFilterAndSearch();
+    });
+
+    // Parse URL parameter e.g. /?q=cisco
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramQ = urlParams.get('q');
+      if (paramQ) {
+        headerSearchQuery = paramQ.trim().toLowerCase();
+      }
+    } catch (err) {}
 
     function applyFilterAndSearch() {
-      const query = (searchInput?.value || '').trim().toLowerCase();
+      const query = headerSearchQuery || (searchInput?.value || '').trim().toLowerCase();
 
       if (clearBtn) {
         clearBtn.style.display = query.length > 0 ? 'inline-flex' : 'none';
