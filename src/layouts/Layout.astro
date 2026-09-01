@@ -8,6 +8,7 @@ import { organizationLd, websiteLd, breadcrumbLd, ldScript } from '../lib/seo';
 interface Props {
   title: string;
   description?: string;
+  keywords?: string | string[];
   /** Optional extra JSON-LD payload(s) injected before </head>. */
   jsonLd?: unknown[];
   /** Breadcrumb trail for BreadcrumbList schema. If omitted, no crumb schema. */
@@ -21,6 +22,7 @@ interface Props {
 const {
   title,
   description = 'OllaSoftware Blog — Long-form 5,000-word brand deep-dives on every Olla product. Honest, technical, useful.',
+  keywords,
   jsonLd = [],
   breadcrumb,
   ogImage = '/og-image.png',
@@ -29,6 +31,7 @@ const {
 
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 const ogImageAbs = new URL(ogImage, Astro.site).toString();
+const keywordsStr = Array.isArray(keywords) ? keywords.join(', ') : keywords;
 
 // Always inject Organization + WebSite; add Breadcrumb if provided; then any
 // page-specific schemas the caller passed via `jsonLd`.
@@ -53,6 +56,7 @@ for (const x of jsonLd) allLd.push(x);
     <!-- Primary SEO -->
     <title>{title}</title>
     <meta name="description" content={description} />
+    {keywordsStr && <meta name="keywords" content={keywordsStr} />}
     <link rel="canonical" href={canonical} />
 
     <!-- Favicons -->
