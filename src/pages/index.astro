@@ -474,40 +474,54 @@ const remainingPosts = enhancedPosts.slice(1);
       }
 
       if (matchingPosts.length > 0) {
-        const featured = matchingPosts[0];
-        const remainingSlugs = new Set(matchingPosts.slice(1).map((p) => p.slug));
+        const allMatchingSlugs = new Set(matchingPosts.map((p) => p.slug));
 
-        // Update Featured Card
-        if (featuredHeroCard) {
-          featuredHeroCard.style.display = 'flex';
-          featuredHeroCard.href = `/blog/${featured.slug}/`;
-          if (featuredBadge) featuredBadge.textContent = featured.curatedBadge;
-          if (featuredDomain) featuredDomain.textContent = featured.brandDomain;
-          if (featuredTitle) featuredTitle.textContent = `${featured.brand} — ${featured.brandTagline}`;
-          if (featuredDesc) featuredDesc.textContent = featured.metaDescription;
-          if (featuredReadTime) featuredReadTime.textContent = `${featured.readingTimeMin} min read`;
+        if (query) {
+          // When actively searching, display all matching posts in the main grid!
+          if (featuredHeroCard) featuredHeroCard.style.display = 'none';
 
-          // Watermark
-          if (featuredWatermark && watermarkImg) {
-            const customWatermark = watermarkMap[featured.slug];
-            if (customWatermark) {
-              watermarkImg.src = customWatermark;
-              featuredWatermark.style.display = 'flex';
+          gridCards.forEach((card) => {
+            const slug = card.getAttribute('data-slug');
+            if (allMatchingSlugs.has(slug)) {
+              card.style.display = 'flex';
             } else {
-              featuredWatermark.style.display = 'none';
+              card.style.display = 'none';
+            }
+          });
+        } else {
+          // Normal category view: top post in hero card, rest in grid cards
+          const featured = matchingPosts[0];
+          const remainingSlugs = new Set(matchingPosts.slice(1).map((p) => p.slug));
+
+          if (featuredHeroCard) {
+            featuredHeroCard.style.display = 'flex';
+            featuredHeroCard.href = `/blog/${featured.slug}/`;
+            if (featuredBadge) featuredBadge.textContent = featured.curatedBadge;
+            if (featuredDomain) featuredDomain.textContent = featured.brandDomain;
+            if (featuredTitle) featuredTitle.textContent = `${featured.brand} — ${featured.brandTagline}`;
+            if (featuredDesc) featuredDesc.textContent = featured.metaDescription;
+            if (featuredReadTime) featuredReadTime.textContent = `${featured.readingTimeMin} min read`;
+
+            if (featuredWatermark && watermarkImg) {
+              const customWatermark = watermarkMap[featured.slug];
+              if (customWatermark) {
+                watermarkImg.src = customWatermark;
+                featuredWatermark.style.display = 'flex';
+              } else {
+                featuredWatermark.style.display = 'none';
+              }
             }
           }
-        }
 
-        // Show remaining cards in grid
-        gridCards.forEach((card) => {
-          const slug = card.getAttribute('data-slug');
-          if (remainingSlugs.has(slug)) {
-            card.style.display = 'flex';
-          } else {
-            card.style.display = 'none';
-          }
-        });
+          gridCards.forEach((card) => {
+            const slug = card.getAttribute('data-slug');
+            if (remainingSlugs.has(slug)) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        }
 
         if (noResults) noResults.style.display = 'none';
       } else {

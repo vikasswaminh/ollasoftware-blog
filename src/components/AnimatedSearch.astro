@@ -300,6 +300,16 @@
     var input = document.querySelector("[data-search-input]");
 
     if (wrapper && button && input) {
+      // Check URL for existing search query e.g. /?q=cisco
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var q = params.get('q');
+        if (q) {
+          input.value = q;
+          wrapper.classList.add("active");
+        }
+      } catch (err) {}
+
       button.addEventListener("click", function() {
         if (!wrapper.classList.contains("active")) {
           wrapper.classList.add("active");
@@ -308,7 +318,7 @@
       });
 
       document.addEventListener("click", function(e) {
-        if (!wrapper.contains(e.target)) {
+        if (!wrapper.contains(e.target) && !input.value.trim()) {
           wrapper.classList.remove("active");
           wrapper.classList.remove("loading");
         }
@@ -316,20 +326,20 @@
 
       input.addEventListener("input", function() {
         var query = input.value.trim();
-
-        // Dispatch global event so the blog cards below update instantly in real-time!
+        // Dispatch real-time blog-search event
         window.dispatchEvent(new CustomEvent('blog-search', { detail: { query: query } }));
-
-        // If on another page, navigate to homepage pieces section on enter
-        if (window.location.pathname !== '/' && window.location.pathname !== '') {
-          // Keep active state for typed search
-        }
       });
 
       input.addEventListener("keydown", function(e) {
         if (e.key === "Enter") {
           var query = input.value.trim();
-          if (query) {
+          if (window.location.pathname === '/' || window.location.pathname === '') {
+            window.dispatchEvent(new CustomEvent('blog-search', { detail: { query: query } }));
+            var piecesEl = document.getElementById('pieces');
+            if (piecesEl) {
+              piecesEl.scrollIntoView({ behavior: 'smooth' });
+            }
+          } else if (query) {
             window.location.href = '/?q=' + encodeURIComponent(query) + '#pieces';
           }
         }
