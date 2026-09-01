@@ -1,49 +1,44 @@
 ---
-import Layout from '../../layouts/Layout.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getAllTags, allPosts } from '../../lib';
 
 const allTags = getAllTags();
 
-// Category definitions with rich metadata, icons, taglines, and tag mapping rules
+// Category definitions with rich metadata, clean taglines, and tag mapping rules (No emojis/images)
 const categories = [
   {
     id: 'ai',
     name: 'AI & Intelligent Agents',
-    icon: '🤖',
     tagline: 'AEO, LLM Observability, RAG, Web Memory & Agentic Runtimes',
-    color: { bg: '#f0fdf4', border: '#bbf7d0', text: '#16a34a', accent: '#22c55e' },
+    color: { bg: '#f0fdf4', border: '#bbf7d0', text: '#15803d', accent: '#16a34a' },
     keywords: ['ai', 'aeo', 'agent', 'llm', 'rag', 'web-memory', 'crawling', 'graph', 'vector', 'multi-model', 'production-ai', 'enterprise-ai', 'answer-engine', 'seo', 'privacy'],
   },
   {
     id: 'security',
     name: 'Security & Networking',
-    icon: '🛡️',
     tagline: 'Zero Trust, SD-WAN, Mesh VPN, WireGuard & Quantum Security',
-    color: { bg: '#faf5ff', border: '#e9d5ff', text: '#7c3aed', accent: '#8b5cf6' },
+    color: { bg: '#faf5ff', border: '#e9d5ff', text: '#6b21a8', accent: '#7c3aed' },
     keywords: ['security', 'zero-trust', 'ztna', 'sd-wan', 'vpn', 'wireguard', 'encryption', 'phishing', 'dns', 'quantum', 'network-security', 'secure-access', 'remote-access'],
   },
   {
     id: 'api',
     name: 'APIs & Infrastructure',
-    icon: '⚡',
     tagline: 'Localhost Tunnels, MCP Native, Realtime Data Sync & Edge Compute',
-    color: { bg: '#eff6ff', border: '#bfdbfe', text: '#2563eb', accent: '#3b82f6' },
+    color: { bg: '#eff6ff', border: '#bfdbfe', text: '#1d4ed8', accent: '#2563eb' },
     keywords: ['api', 'tunnel', 'mcp', 'sync', 'edge', 'infra', 'media', 'cdn', 'reliability', 'cross-platform', 'data-sync', 'localhost-tunnel', 'secure-tunneling'],
   },
   {
     id: 'saas',
     name: 'SaaS & Developer Tools',
-    icon: '🚀',
     tagline: 'Resume Builders, SaaS Infrastructure & Indian Developer Ecosystems',
-    color: { bg: '#fff7ed', border: '#fed7aa', text: '#ea580c', accent: '#f97316' },
+    color: { bg: '#fff7ed', border: '#fed7aa', text: '#c2410c', accent: '#ea580c' },
     keywords: ['saas', 'resume', 'free-tool', 'cv', 'career', 'indian-developers', 'rupee', 'developer-tools', 'career-tools', 'distributed-teams'],
   },
   {
     id: 'education',
     name: 'Education & Certifications',
-    icon: '🎓',
     tagline: 'Cisco Training, CCNA/CCIE Bootcamps & Enterprise Networking Education',
-    color: { bg: '#f0fdfa', border: '#99f6e4', text: '#0d9488', accent: '#14b8a6' },
+    color: { bg: '#f0fdfa', border: '#99f6e4', text: '#0f766e', accent: '#0d9488' },
     keywords: ['education', 'cisco', 'ccna', 'ccie', 'networking-training', 'certification', 'exam', 'bangalore', 'exam-prep', 'networkershome'],
   },
 ];
@@ -69,59 +64,78 @@ const categorizedTags = categories.map((cat) => {
 });
 ---
 
-<Layout
+<BaseLayout
   title="Tags & Category — OllaSoftware Blog"
-  description={`Explore all ${allTags.length} topics across 5 categories and ${allPosts.length} brand deep-dives.`}
+  description={`Explore all ${allTags.length} topics categorized into 5 technology pillars across ${allPosts.length} brand deep-dives.`}
+  fullWidth={true}
 >
-  <div class="tags-hub-page">
+  <!-- Hero Section matching the exact background & style of the main blog page -->
+  <section slot="hero" class="hero-section">
+    <div class="hero-content">
+      <div class="eyebrow-badge mono">PRO TOPIC TAXONOMY</div>
+      <h1 class="hero-title">
+        Tags & <span class="hero-title-blog">Category</span>
+      </h1>
+      <p class="hero-tagline">
+        Explore {allTags.length} topics categorized into 5 technology pillars across {allPosts.length} brand deep-dives. Select any category or tag below to filter articles instantly.
+      </p>
 
-    <!-- Centered Header Section -->
-    <header class="tags-header-centered">
-      <div class="header-inner">
-        <div class="eyebrow-pill mono">PRO TOPIC TAXONOMY</div>
-        <h1 class="centered-h1">Tags & Category</h1>
-        <p class="centered-sub mono">
-          Explore {allTags.length} topics categorized into 5 technology pillars across {allPosts.length} brand deep-dives. Select any category or tag below to filter articles instantly.
-        </p>
-
-        <!-- Centered Main Search Bar -->
-        <div class="search-box-centered">
-          <svg class="search-svg" viewBox="0 0 20 20" fill="currentColor" width="18" height="18" aria-hidden="true">
-            <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"/>
-          </svg>
-          <input
-            type="text"
-            id="hub-search-input"
-            class="search-input mono"
-            placeholder="Search topics (e.g. #zero-trust, #ai-agents, #cisco, #mcp)..."
-            aria-label="Search topics"
-          />
-        </div>
-
-        <!-- Category Filter Tabs -->
-        <nav class="category-tabs-bar" aria-label="Category Filters">
-          <button class="cat-tab-btn active" data-cat="all">
-            <span class="cat-tab-icon">🌐</span> All Categories
-            <span class="cat-tab-count mono">{allTags.length}</span>
+      <!-- Sleek Search Bar matching the main blog page -->
+      <div class="search-container">
+        <form class="search-form" id="search-form" onsubmit="event.preventDefault();">
+          <div class="search-input-wrapper">
+            <svg
+              class="search-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              type="text"
+              id="hub-search-input"
+              class="search-input"
+              placeholder="Search topics (e.g. zero-trust, ai-agents, cisco, mcp)..."
+              autocomplete="off"
+              aria-label="Search topics"
+            />
+          </div>
+          <button type="button" id="clear-btn" class="search-clear-btn" style="display: none;" aria-label="Clear search">
+            ✕ Clear
           </button>
-          {categorizedTags.map((cat) => (
-            <button class="cat-tab-btn" data-cat={cat.id}>
-              <span class="cat-tab-icon">{cat.icon}</span> {cat.name}
-              <span class="cat-tab-count mono">{cat.tags.length}</span>
-            </button>
-          ))}
-        </nav>
+        </form>
       </div>
-    </header>
 
-    <!-- Main Categorized Content Hub -->
-    <main class="hub-container">
+      <!-- Category Filter Tabs (Text-Only, No Emojis/Images) -->
+      <nav class="category-tabs-bar" aria-label="Category Filters">
+        <button class="cat-tab-btn active" data-cat="all">
+          All Categories
+          <span class="cat-tab-count mono">{allTags.length}</span>
+        </button>
+        {categorizedTags.map((cat) => (
+          <button class="cat-tab-btn" data-cat={cat.id}>
+            {cat.name}
+            <span class="cat-tab-count mono">{cat.tags.length}</span>
+          </button>
+        ))}
+      </nav>
+    </div>
+  </section>
+
+  <!-- Main Content Area -->
+  <div class="tags-hub-body">
+    <div class="container">
 
       <!-- Dynamic Search No Results State -->
       <div id="no-results-box" class="no-results-box" style="display: none;">
-        <div class="no-results-icon">🔍</div>
         <h3>No matching topics found</h3>
-        <p>Try searching for keywords like <code>#zero-trust</code>, <code>#aeo</code>, <code>#api</code>, or <code>#cisco</code>.</p>
+        <p>Try searching for terms like <code>zero-trust</code>, <code>aeo</code>, <code>api</code>, or <code>cisco</code>.</p>
       </div>
 
       <!-- Categorized Sections -->
@@ -130,11 +144,8 @@ const categorizedTags = categories.map((cat) => {
           <section class="category-card-block" data-cat-block={cat.id}>
             <div class="category-card-header" style={`background: ${cat.color.bg}; border-color: ${cat.color.border}`}>
               <div class="cat-header-left">
-                <span class="cat-large-icon">{cat.icon}</span>
-                <div>
-                  <h2 class="cat-title" style={`color: ${cat.color.text}`}>{cat.name}</h2>
-                  <p class="cat-tagline mono">{cat.tagline}</p>
-                </div>
+                <h2 class="cat-title" style={`color: ${cat.color.text}`}>{cat.name}</h2>
+                <p class="cat-tagline">{cat.tagline}</p>
               </div>
               <div class="cat-header-right">
                 <span class="cat-badge mono" style={`background: ${cat.color.border}; color: ${cat.color.text}`}>
@@ -166,8 +177,8 @@ const categorizedTags = categories.map((cat) => {
       <section class="all-tags-section" id="all-tags-section">
         <div class="all-tags-header">
           <span class="section-badge mono">COMPLETE DIRECTORY</span>
-          <h2>All Topics Index ({allTags.length})</h2>
-          <p class="mono">Alphabetical and count-sorted view of all tags</p>
+          <h2>All Topics Directory ({allTags.length})</h2>
+          <p>Alphabetical index of all blog tags across the site</p>
         </div>
         <div class="all-tags-grid" id="all-tags-grid">
           {allTags.map(({ tag, count }) => (
@@ -180,91 +191,141 @@ const categorizedTags = categories.map((cat) => {
         </div>
       </section>
 
-    </main>
+    </div>
   </div>
-</Layout>
+</BaseLayout>
 
 <style>
   /* ── Page Shell ── */
-  .tags-hub-page {
-    background: var(--o-bg, #ffffff);
-    min-height: 100vh;
-    padding-bottom: 96px;
+  .tags-hub-body {
+    background: var(--bg, #f4f7fb);
+    padding: 3rem 0 5rem;
+    min-height: 60vh;
   }
 
-  /* ── Centered Header ── */
-  .tags-header-centered {
-    padding: 64px 24px 48px;
-    background: linear-gradient(180deg, rgba(37, 99, 235, 0.04) 0%, rgba(255, 255, 255, 0) 100%);
-    border-bottom: 1px solid #e2e8f0;
+  /* ── Hero Section (Matching Main Blog Page Background) ── */
+  .hero-section {
+    width: 100%;
+    background-color: #f8fafc;
+    background-image: url('/hero-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     text-align: center;
+    padding: 3.5rem 1.5rem 3rem;
+    border-bottom: 1.5px solid var(--border, #e2e8f0);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+    position: relative;
+    overflow: hidden;
   }
 
-  .header-inner {
-    max-width: 900px;
+  /* High-tech Blueprint Grid overlay matching main blog hero */
+  .hero-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-size: 32px 32px;
+    background-image: 
+      linear-gradient(to right, rgba(29, 106, 243, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(29, 106, 243, 0.08) 1px, transparent 1px);
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 30%, transparent 95%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 30%, transparent 95%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .hero-content {
+    max-width: 46rem;
     margin: 0 auto;
+    position: relative;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .eyebrow-pill {
+  .eyebrow-badge {
     background: rgba(37, 99, 235, 0.08);
-    color: #2563eb;
+    color: #1d4ed8;
     border: 1px solid rgba(37, 99, 235, 0.25);
-    padding: 4px 14px;
+    padding: 3px 12px;
     border-radius: 6px;
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 1px;
     text-transform: uppercase;
-    margin-bottom: 16px;
+    margin-bottom: 1rem;
+    display: inline-block;
   }
 
-  .centered-h1 {
-    font-size: clamp(32px, 4.5vw, 52px);
+  .hero-title {
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 2.75rem;
+    line-height: 1.16;
     font-weight: 900;
-    letter-spacing: -1.2px;
     color: #0f172a;
-    margin: 0 0 14px;
-    line-height: 1.1;
+    margin: 0 0 0.85rem;
+    letter-spacing: -0.03em;
   }
 
-  .centered-sub {
-    font-size: clamp(14px, 1.2vw, 16px);
-    color: #64748b;
+  .hero-title-blog {
+    color: #1D6AF3;
+  }
+
+  /* Subtitle formatted strictly in Lato font */
+  .hero-tagline {
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #475467;
+    font-size: 1.12rem;
     line-height: 1.6;
-    max-width: 720px;
-    margin: 0 0 28px;
+    margin: 0 auto 2rem;
+    max-width: 42rem;
+    text-align: center;
+    font-weight: 500;
   }
 
-  /* ── Search Bar ── */
-  .search-box-centered {
+  /* ── Sleek Search Container matching Blog Page ── */
+  .search-container {
     width: 100%;
-    max-width: 640px;
+    max-width: 44rem;
+    margin: 0 auto 2.25rem;
+  }
+
+  .search-form {
     display: flex;
     align-items: center;
-    gap: 12px;
     background: #ffffff;
-    border: 2px solid #cbd5e1;
-    border-radius: 14px;
-    padding: 12px 18px;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    margin-bottom: 32px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: var(--radius-full, 9999px);
+    padding: 6px 7px 6px 20px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    gap: 10px;
   }
 
-  .search-box-centered:focus-within {
+  .search-form:focus-within {
     border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12), 0 12px 32px rgba(37, 99, 235, 0.08);
+    transform: translateY(-1px);
   }
 
-  .search-svg {
+  .search-input-wrapper {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 12px;
+  }
+
+  .search-icon {
+    width: 20px;
+    height: 20px;
     color: #64748b;
     flex-shrink: 0;
+    transition: color 0.2s ease;
   }
 
-  .search-box-centered:focus-within .search-svg {
+  .search-form:focus-within .search-icon {
     color: #2563eb;
   }
 
@@ -272,34 +333,55 @@ const categorizedTags = categories.map((cat) => {
     width: 100%;
     border: none;
     outline: none;
-    font-size: 15px;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
     color: #0f172a;
     background: transparent;
+    padding: 6px 0;
   }
 
   .search-input::placeholder {
     color: #94a3b8;
   }
 
-  /* ── Category Filter Tabs ── */
+  .search-clear-btn {
+    background: #f1f5f9;
+    border: none;
+    color: #64748b;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .search-clear-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+
+  /* ── Category Filter Tabs (Clean text-only) ── */
   .category-tabs-bar {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
-    max-width: 900px;
+    max-width: 44rem;
   }
 
   .cat-tab-btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 16px;
-    border-radius: 999px;
+    padding: 7px 16px;
+    border-radius: 9999px;
     border: 1.5px solid #cbd5e1;
     background: #ffffff;
     color: #334155;
-    font-size: 13px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.88rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -308,27 +390,23 @@ const categorizedTags = categories.map((cat) => {
 
   .cat-tab-btn:hover {
     border-color: #2563eb;
-    color: #2563eb;
+    color: #1d4ed8;
     background: #eff6ff;
     transform: translateY(-1px);
   }
 
   .cat-tab-btn.active {
-    background: #2563eb;
-    border-color: #2563eb;
+    background: #1d4ed8;
+    border-color: #1d4ed8;
     color: #ffffff;
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
-  }
-
-  .cat-tab-icon {
-    font-size: 14px;
+    box-shadow: 0 4px 14px rgba(29, 78, 216, 0.28);
   }
 
   .cat-tab-count {
-    font-size: 11px;
+    font-size: 0.72rem;
     font-weight: 800;
     padding: 2px 7px;
-    border-radius: 999px;
+    border-radius: 9999px;
     background: #f1f5f9;
     color: #475467;
   }
@@ -338,53 +416,42 @@ const categorizedTags = categories.map((cat) => {
     color: #ffffff;
   }
 
-  /* ── Hub Main Container ── */
-  .hub-container {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 48px 24px 0;
-  }
-
+  /* ── Main Body & Cards ── */
   .no-results-box {
     text-align: center;
-    padding: 48px 24px;
-    background: #f8fafc;
+    padding: 3rem 2rem;
+    background: #ffffff;
     border: 2px dashed #cbd5e1;
     border-radius: 16px;
     color: #475467;
-    margin-bottom: 48px;
-  }
-
-  .no-results-icon {
-    font-size: 36px;
-    margin-bottom: 12px;
+    margin-bottom: 3rem;
   }
 
   .no-results-box h3 {
-    margin: 0 0 8px;
+    margin: 0 0 0.5rem;
     color: #0f172a;
-    font-size: 20px;
+    font-size: 1.25rem;
+    font-family: 'Lato', sans-serif;
   }
 
   .no-results-box code {
-    background: #e2e8f0;
+    background: #f1f5f9;
     padding: 2px 6px;
     border-radius: 4px;
-    color: #1e293b;
+    color: #1d4ed8;
   }
 
-  /* ── Categorized Sections List ── */
   .categories-list {
     display: flex;
     flex-direction: column;
-    gap: 40px;
-    margin-bottom: 64px;
+    gap: 2.25rem;
+    margin-bottom: 4rem;
   }
 
   .category-card-block {
     background: #ffffff;
     border: 1.5px solid #e2e8f0;
-    border-radius: 18px;
+    border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
     transition: all 0.2s ease;
@@ -392,56 +459,54 @@ const categorizedTags = categories.map((cat) => {
 
   .category-card-block:hover {
     border-color: #cbd5e1;
-    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
   }
 
   .category-card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 24px;
+    padding: 1.25rem 1.5rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
   }
 
   .cat-header-left {
     display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  .cat-large-icon {
-    font-size: 28px;
-    line-height: 1;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .cat-title {
-    margin: 0 0 4px;
-    font-size: 20px;
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+    font-size: 1.3rem;
     font-weight: 800;
-    letter-spacing: -0.4px;
+    letter-spacing: -0.02em;
   }
 
   .cat-tagline {
     margin: 0;
-    font-size: 12px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.88rem;
     color: #475467;
+    font-weight: 500;
   }
 
   .cat-badge {
-    font-size: 11px;
+    font-size: 0.72rem;
     font-weight: 800;
-    padding: 5px 12px;
+    padding: 4px 10px;
     border-radius: 6px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.03em;
   }
 
   .category-tags-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 12px;
-    padding: 24px;
+    padding: 1.5rem;
   }
 
   .tag-pill-item {
@@ -449,13 +514,14 @@ const categorizedTags = categories.map((cat) => {
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    padding: 10px 14px;
+    padding: 9px 14px;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 10px;
+    border-radius: 8px;
     text-decoration: none;
     color: #1e293b;
-    font-size: 13px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
     font-weight: 700;
     transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -463,14 +529,14 @@ const categorizedTags = categories.map((cat) => {
   .tag-pill-item:hover {
     background: #ffffff;
     border-color: #2563eb;
-    color: #2563eb;
+    color: #1d4ed8;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
   }
 
   .tag-hash {
     font-weight: 900;
-    font-size: 14px;
+    font-size: 0.95rem;
   }
 
   .tag-label {
@@ -481,12 +547,12 @@ const categorizedTags = categories.map((cat) => {
   }
 
   .tag-count-badge {
-    font-size: 10.5px;
+    font-size: 0.72rem;
     font-weight: 800;
     color: #475467;
     background: #e2e8f0;
     padding: 2px 7px;
-    border-radius: 999px;
+    border-radius: 9999px;
   }
 
   .tag-pill-item:hover .tag-count-badge {
@@ -497,36 +563,38 @@ const categorizedTags = categories.map((cat) => {
   /* ── All Tags Directory Section ── */
   .all-tags-section {
     border-top: 2px dashed #e2e8f0;
-    padding-top: 48px;
+    padding-top: 3rem;
   }
 
   .all-tags-header {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 2rem;
   }
 
   .section-badge {
-    font-size: 10.5px;
+    font-size: 0.72rem;
     font-weight: 800;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.08em;
     color: #64748b;
-    background: #f1f5f9;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     padding: 3px 10px;
     border-radius: 5px;
     text-transform: uppercase;
   }
 
   .all-tags-header h2 {
-    font-size: 28px;
-    font-weight: 800;
+    font-family: 'Lato', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 900;
     color: #0f172a;
-    margin: 10px 0 6px;
-    letter-spacing: -0.5px;
+    margin: 8px 0 4px;
+    letter-spacing: -0.02em;
   }
 
   .all-tags-header p {
     color: #64748b;
-    font-size: 13px;
+    font-size: 0.92rem;
     margin: 0;
   }
 
@@ -547,14 +615,15 @@ const categorizedTags = categories.map((cat) => {
     border-radius: 8px;
     text-decoration: none;
     color: #334155;
-    font-size: 12.5px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.85rem;
     font-weight: 700;
     transition: all 0.15s ease;
   }
 
   .all-tag-card:hover {
     border-color: #2563eb;
-    color: #2563eb;
+    color: #1d4ed8;
     background: #eff6ff;
     transform: translateY(-1px);
   }
@@ -572,35 +641,38 @@ const categorizedTags = categories.map((cat) => {
   }
 
   .all-tag-num {
-    font-size: 10px;
+    font-size: 0.7rem;
     font-weight: 800;
     color: #2563eb;
     background: #dbeafe;
     padding: 1px 6px;
-    border-radius: 999px;
+    border-radius: 9999px;
   }
 
   .mono {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
 
   @media (max-width: 768px) {
-    .tags-header-centered {
-      padding: 40px 16px 32px;
+    .hero-section {
+      padding: 2.5rem 1rem 2rem;
     }
-    .centered-h1 {
-      font-size: 32px;
+    .hero-title {
+      font-size: 2rem;
+    }
+    .hero-tagline {
+      font-size: 1rem;
     }
     .category-tabs-bar {
       gap: 6px;
     }
     .cat-tab-btn {
       padding: 6px 12px;
-      font-size: 12px;
+      font-size: 0.8rem;
     }
     .category-tags-grid {
       grid-template-columns: 1fr;
-      padding: 16px;
+      padding: 1rem;
     }
     .all-tags-grid {
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -611,9 +683,9 @@ const categorizedTags = categories.map((cat) => {
 <script is:inline>
   document.addEventListener('DOMContentLoaded', function() {
     var searchInput = document.getElementById('hub-search-input');
+    var clearBtn = document.getElementById('clear-btn');
     var catTabs = document.querySelectorAll('.cat-tab-btn');
     var catBlocks = document.querySelectorAll('.category-card-block');
-    var tagPills = document.querySelectorAll('.tag-pill-item');
     var allTagCards = document.querySelectorAll('.all-tag-card');
     var noResults = document.getElementById('no-results-box');
 
@@ -621,6 +693,11 @@ const categorizedTags = categories.map((cat) => {
 
     function filterHub() {
       var query = (searchInput ? searchInput.value : '').trim().toLowerCase().replace(/^#/, '');
+
+      if (clearBtn) {
+        clearBtn.style.display = query.length > 0 ? 'inline-flex' : 'none';
+      }
+
       var totalVisibleTags = 0;
 
       catBlocks.forEach(function(block) {
@@ -677,8 +754,14 @@ const categorizedTags = categories.map((cat) => {
 
     // Search Input listener
     if (searchInput) {
-      searchInput.addEventListener('input', function() {
+      searchInput.addEventListener('input', filterHub);
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function() {
+        if (searchInput) searchInput.value = '';
         filterHub();
+        if (searchInput) searchInput.focus();
       });
     }
   });
