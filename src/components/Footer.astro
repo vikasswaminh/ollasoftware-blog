@@ -1,17 +1,364 @@
 ---
 import { SITE } from '../config';
 const year = new Date().getFullYear();
+
+const rankingLinks: Array<[string, string]> = [
+  ['AI Software · BLR', 'https://ollasoftware.com/top-10/ai-software-development-companies-bangalore/'],
+  ['Software Dev · BLR', 'https://ollasoftware.com/top-10/software-development-companies-bangalore/'],
+  ['AEO · India', 'https://ollasoftware.com/top-10/aeo-companies-india/'],
+  ['SEO · BLR', 'https://ollasoftware.com/top-10/seo-agencies-bangalore/'],
+  ['Social · BLR', 'https://ollasoftware.com/top-10/social-media-marketing-agencies-bangalore/'],
+  ['Performance · BLR', 'https://ollasoftware.com/top-10/performance-marketing-agencies-bangalore/'],
+];
+
+const serviceLinks: Array<[string, string]> = [
+  ['AI Software Development', 'https://ollasoftware.com/services/ai-software/'],
+  ['Software Development', 'https://ollasoftware.com/services/software-dev/'],
+  ['Answer Engine Optimization', 'https://ollasoftware.com/services/aeo/'],
+  ['Search Engine Optimization', 'https://ollasoftware.com/services/seo/'],
+  ['Social Media Marketing', 'https://ollasoftware.com/services/social-media/'],
+  ['Performance Marketing', 'https://ollasoftware.com/services/performance-marketing/'],
+];
+
+const workLinks: Array<[string, string]> = [
+  ['Case studies', 'https://ollasoftware.com/work/'],
+  ['Recent work', 'https://ollasoftware.com/work/'],
+  ['Industries', 'https://ollasoftware.com/work/#industries'],
+  ['Sample SOW', 'https://ollasoftware.com/process/#sow'],
+];
+
+const companyLinks: Array<[string, string]> = [
+  ['Process', 'https://ollasoftware.com/process/'],
+  ['About', 'https://ollasoftware.com/about/'],
+  ['Blog', 'https://ollasoftware.com/blog/'],
+  ['Jobs · 19 roles', 'https://ollasoftware.com/jobs/'],
+  ['Press', 'https://ollasoftware.com/about/#press'],
+];
+
+const trustLinks: Array<[string, string]> = [
+  ['SOC 2', 'https://ollasoftware.com/process/#security'],
+  ['GDPR / DPA', 'https://ollasoftware.com/process/#gdpr'],
+  ['Master MSA', 'https://ollasoftware.com/process/#msa'],
+  ['Security FAQ', 'https://ollasoftware.com/process/#bounty'],
+];
+
+const cols: Array<[string, Array<[string, string]>]> = [
+  ['SERVICES', serviceLinks],
+  ['TOP 10 RANKINGS', rankingLinks],
+  ['WORK', workLinks],
+  ['COMPANY', companyLinks],
+  ['TRUST', trustLinks],
+];
 ---
 
 <footer class="site-footer">
-  <div class="container footer-inner">
-    <p>© {year} {SITE.brand}. All rights reserved.</p>
-    <p class="footer-links">
-      <a href={SITE.marketingUrl}>{SITE.marketingLabel}</a>
-      <span aria-hidden="true">·</span>
-      <a href="/rss.xml">RSS</a>
-      <span aria-hidden="true">·</span>
-      <a href="/tags/">Tags</a>
-    </p>
+  <div class="foot-container">
+    <div class="footer-grid">
+      <div class="brand-col">
+        <div class="brand">
+          <img src="/footer-building-logo.png" alt="ollasoftware logo" class="brand-logo" width="38" height="44" />
+          <span class="brand-name">ollasoftware</span>
+        </div>
+        <p class="tagline">
+          Pioneer AI software development company in India. Headquartered in
+          Bangalore. Owners of 40+ AI brands. We build custom AI, software,
+          AEO/SEO, social and performance for clients worldwide.
+        </p>
+        <form class="newsletter" onsubmit="event.preventDefault();">
+          <input
+            type="email"
+            placeholder="you@company.com"
+            class="newsletter-input"
+            aria-label="Email for field notes newsletter"
+          />
+          <button type="submit" class="newsletter-btn">
+            <span>field notes</span>
+            <span class="arrow">→</span>
+          </button>
+        </form>
+        <p class="newsletter-foot mono">monthly · case studies &amp; lessons · no funnel</p>
+      </div>
+
+      {cols.map(([head, items]) => (
+        <div class="col">
+          <div class="col-head mono">{head}</div>
+          <ul>
+            {items.map(([label, to]) => (
+              <li><a href={to} target={to.startsWith('http') ? "_blank" : undefined} rel={to.startsWith('http') ? "noopener noreferrer" : undefined}>{label}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <div class="legal">
+      <span class="mono">© {year} Ollasoftware, Inc. · Bangalore · Brooklyn · Lisboa</span>
+      <span class="mono">40+ AI brands shipped · 1 senior team</span>
+    </div>
   </div>
 </footer>
+
+<style>
+  .site-footer {
+    padding: clamp(48px, 6vw, 72px) clamp(16px, 4vw, 56px) 36px;
+    background: #030712;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: #FFFFFF;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 0;
+  }
+
+  .foot-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .footer-grid {
+    display: grid;
+    /* 1 Brand Column + 5 Link Columns */
+    grid-template-columns: 1.4fr repeat(5, 1fr);
+    gap: 36px;
+    margin-bottom: 56px;
+  }
+
+  .brand-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .brand-logo {
+    height: 34px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(0, 163, 255, 0.5));
+  }
+
+  .brand-name {
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-weight: 900;
+    font-size: 23px;
+    color: #ffffff;
+    letter-spacing: -0.75px;
+    line-height: 1;
+  }
+
+  .tagline {
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin: 0 0 20px;
+    max-width: 290px;
+  }
+
+  .newsletter {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 320px;
+    width: 100%;
+    height: 38px;
+    background: #080f1e;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+  }
+
+  .newsletter-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: #FFFFFF;
+    padding: 0 12px;
+    font-size: 11.5px;
+    font-family: 'Lato', sans-serif;
+    outline: none;
+    min-width: 0;
+  }
+
+  .newsletter-input::placeholder {
+    color: #64748b;
+  }
+
+  .newsletter-btn {
+    border: none;
+    background: #1D6AF3;
+    color: #ffffff;
+    padding: 0 14px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Lato', sans-serif;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+
+  .newsletter-btn:hover {
+    background: #1557c0;
+  }
+
+  .newsletter-btn .arrow {
+    font-size: 11px;
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+
+  .newsletter-btn:hover .arrow {
+    transform: translateX(2px);
+  }
+
+  .newsletter-foot {
+    font-size: 10.5px;
+    color: #64748b;
+    margin: 10px 0 0;
+    font-family: var(--mono, monospace);
+  }
+
+  .col-head {
+    font-family: var(--mono, monospace);
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 16px;
+  }
+
+  .col ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .col a {
+    font-family: 'Lato', sans-serif;
+    color: #94a3b8;
+    font-size: 12.5px;
+    text-decoration: none;
+    transition: color 0.15s ease, transform 0.15s ease;
+    display: inline-block;
+  }
+
+  .col a:hover {
+    color: #60a5fa;
+    transform: translateX(2px);
+  }
+
+  .legal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .legal span {
+    font-size: 11.5px;
+    color: #64748b;
+    font-family: var(--mono, monospace);
+  }
+
+  @media (max-width: 1100px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 36px;
+    }
+    .brand-col {
+      grid-column: 1 / -1;
+      margin-bottom: 12px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .site-footer {
+      padding: 36px 16px 28px;
+    }
+    .footer-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 24px 16px;
+      margin-bottom: 32px;
+    }
+    .brand-col {
+      grid-column: 1 / -1;
+      margin-bottom: 12px;
+    }
+    .brand-name {
+      font-size: 15px;
+    }
+    .brand-logo {
+      height: 24px;
+    }
+    .tagline {
+      font-size: 11.5px;
+      margin-bottom: 14px;
+      max-width: 100%;
+    }
+    .newsletter {
+      height: 36px;
+      max-width: 100%;
+    }
+    .newsletter-input {
+      font-size: 11px;
+      padding: 0 10px;
+    }
+    .newsletter-btn {
+      font-size: 10.5px;
+      padding: 0 10px;
+    }
+    .col-head {
+      font-size: 10.5px;
+      margin-bottom: 10px;
+      letter-spacing: 0.1em;
+    }
+    .col ul {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .col a {
+      font-size: 11.5px;
+      line-height: 1.35;
+    }
+    .legal {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding-top: 20px;
+    }
+    .legal span {
+      font-size: 10.5px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .footer-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 20px 12px;
+    }
+    .col a {
+      font-size: 11px;
+    }
+  }
+</style>

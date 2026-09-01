@@ -1,16 +1,74 @@
 ---
+import BlogPostPage from '../../components/blog/BlogPostPage.astro';
 import PostLayout from '../../layouts/PostLayout.astro';
+import { allPosts } from '../../lib/blog';
 import { getPublishedPosts } from '../../utils/posts';
+import { SITE, articleLd, faqLd, breadcrumbLd } from '../../lib/seo';
 
 export async function getStaticPaths() {
-  const posts = await getPublishedPosts();
-  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+  const deepDivePaths = allPosts.map((p) => {
+    const url = `${SITE}/blog/${p.slug}/`;
+    const article = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      '@id': `${url}#article`,
+      mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+      headline: p.title,
+      description: p.metaDescription,
+      datePublished: p.publishedOn,
+      dateModified: p.lastUpdated,
+      inLanguage: 'en-IN',
+      author: {
+        '@type': 'Organization',
+        '@id': `${SITE}#organization`,
+        name: 'Ollasoftware',
+      },
+      publisher: { '@id': `${SITE}#organization` },
+      image: `${SITE}/og-image.png`,
+      isAccessibleForFree: true,
+      wordCount: p.wordCount,
+      about: {
+        '@type': 'Organization',
+        name: p.brand,
+        url: `https://${p.brandDomain}/`,
+      },
+    };
+    const jsonLd = [
+      article,
+      faqLd(p.faqs),
+      breadcrumbLd([
+        { name: 'Home', url: `${SITE}/` },
+        { name: 'Blog', url: `${SITE}/blog/` },
+        { name: p.brand, url },
+      ]),
+    ];
+    return {
+      params: { slug: p.slug },
+      props: { type: 'deep-dive', post: p, jsonLd },
+    };
+  });
+
+  const markdownPosts = await getPublishedPosts();
+  const markdownPaths = markdownPosts.map((post) => ({
+    params: { slug: post.slug },
+    props: { type: 'markdown', post, jsonLd: [] },
+  }));
+
+  return [...deepDivePaths, ...markdownPaths];
 }
 
-const { post } = Astro.props;
-const { Content } = await post.render();
+const { type, post, jsonLd } = Astro.props;
 ---
 
-<PostLayout post={post}>
-  <Content />
-</PostLayout>
+{
+  type === 'deep-dive' ? (
+    <BlogPostPage post={post} jsonLd={jsonLd} />
+  ) : (
+    <PostLayout post={post}>
+      {async () => {
+        const { Content } = await post.render();
+        return <Content />;
+      }}
+    </PostLayout>
+  )
+}

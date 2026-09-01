@@ -1,0 +1,26 @@
+---
+import { o } from '../../lib/tokens';
+
+interface Props {
+  color?: string;
+}
+
+const { color = o.accent } = Astro.props;
+---
+<span class="tag" style={`--tag-color:${color}`}>
+  <slot />
+</span>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Lato", sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    color: var(--tag-color);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+</style>

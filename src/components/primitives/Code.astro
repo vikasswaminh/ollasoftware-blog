@@ -1,0 +1,84 @@
+---
+interface Props {
+  title?: string;
+  foot?: string;
+  height?: number | string;
+}
+
+const { title, foot, height } = Astro.props;
+const heightStyle = typeof height === 'number' ? `${height}px` : height;
+---
+<div class="code-card">
+  {title && (
+    <div class="code-head">
+      <div class="dots" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <span class="title mono">{title}</span>
+      <span class="spacer"></span>
+      {foot && <span class="foot mono">{foot}</span>}
+    </div>
+  )}
+  <pre class="code mono" style={heightStyle ? `height:${heightStyle}` : undefined}><slot /></pre>
+</div>
+
+<style>
+  /* Code blocks stay dark on the light theme — canonical "code chrome on
+     light page" pattern. Form4dev does the same with --code-bg #0a0a0a. */
+  .code-card {
+    background: #0a0a0a;
+    border: 1px solid #14171b;
+    border-radius: var(--o-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--o-shadow-deep);
+  }
+
+  .code-head {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    border-bottom: 1px solid #14171b;
+    background: #141414;
+  }
+  .dots { display: flex; gap: 6px; }
+  .dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background: #3a3a3a;
+    display: inline-block;
+  }
+  .title { font-size: 9px; color: #a1a1aa; margin-left: 6px; }
+  .spacer { flex: 1; }
+  .foot { font-size: 10px; color: #71717a; }
+
+  .code {
+    margin: 0;
+    padding: 20px 22px;
+    font-size: 10.5px;
+    line-height: 1.75;
+    color: #e6e6e9;
+    background: #0a0a0a;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Tighten code blocks on mobile so terminal + SOW excerpts fit
+     without aggressive horizontal scrolling. ~10px char glyph at 11px
+     font ⇒ ~36 chars fits in a 390px viewport's content column. */
+  @media (max-width: 700px) {
+    .code-head { height: 32px; padding: 0 12px; }
+    .title { font-size: 10px; }
+    .foot { font-size: 9px; }
+    .code {
+      padding: 14px 16px;
+      font-size: 9px;
+      line-height: 1.65;
+    }
+  }
+  @media (max-width: 420px) {
+    .code { padding: 12px 14px; font-size: 8.5px; }
+  }
+</style>

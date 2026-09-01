@@ -10,7 +10,7 @@ export const SITE = {
   marketingUrl: 'https://ollasoftware.com',
   marketingLabel: 'ollasoftware.com',
   author: 'OllaSoftware Team',
-  accent: '#10b981',
+  accent: '#1d4ed8',
   tagline: 'Sovereign software.',
   locale: 'en',
 } as const;

@@ -3,7 +3,7 @@ title: 'Getting started with OllaSoftware'
 description: 'A quick tour of OllaSoftware and how to get up and running in minutes.'
 pubDate: 2026-08-26
 author: 'OllaSoftware Team'
-tags: ['guides']
+tags: ['ai-agents', 'dev-apis']
 ---
 
 New to **OllaSoftware**? Here's the short version to get you going.

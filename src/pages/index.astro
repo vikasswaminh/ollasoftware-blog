@@ -1,47 +1,648 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PostCard from '../components/PostCard.astro';
-import { SITE } from '../config';
-import { getPublishedPosts, readingTime } from '../utils/posts';
+import { allPosts, getAllTags } from '../lib';
 
-const posts = await getPublishedPosts();
-const featured = posts[0];
-const rest = posts.slice(1);
+// Top 7 real tags for popular topics chips (from actual post content)
+const popularTags = getAllTags().slice(0, 7);
+
+// Curated filter tags mapping
+const MUST_READ_SLUGS = new Set(['ollima', '24observe', 'ollagraph', 'quickztna', 'crawlcrawl', 'ollanode', '21tunnel']);
+const EDITORS_PICK_SLUGS = new Set(['memfog', 'ollabear', 'meshwg', 'aeoniti', 'ollastack', 'ollavpn']);
+const AI_AGENTS_SLUGS = new Set(['ollima', 'ollagraph', 'ollabear', 'ollasuper', 'memfog', 'browserfog', 'crawlcrawl', 'aeoniti', '24observe']);
+const SECURITY_SLUGS = new Set(['quickztna', 'quicksdwan', 'meshwg', 'ollavpn', 'olladns', '21tunnel']);
+const DEV_APIS_SLUGS = new Set(['ollastack', 'ollanode', '21tunnel', 'crawlcrawl', '24observe', 'olladns', 'ollagraph']);
+const SAAS_SLUGS = new Set(['ollasync', 'freefreecv', 'nhprep', 'networkershome', 'ollasuper']);
+
+// Filter categories
+const filterCategories = [
+  { id: 'all', label: 'All', count: allPosts.length },
+  { id: 'must-read', label: 'Must Read', count: MUST_READ_SLUGS.size },
+  { id: 'editors-pick', label: "Editor's Pick", count: EDITORS_PICK_SLUGS.size },
+  { id: 'ai-agents', label: 'AI & Agents', count: AI_AGENTS_SLUGS.size },
+  { id: 'security', label: 'Security & VPN', count: SECURITY_SLUGS.size },
+  { id: 'dev-apis', label: 'Dev APIs', count: DEV_APIS_SLUGS.size },
+  { id: 'saas', label: 'SaaS', count: SAAS_SLUGS.size },
+];
+
+const enhancedPosts = allPosts.map((p, i) => {
+  const isMustRead = MUST_READ_SLUGS.has(p.slug);
+  const isEditorsPick = EDITORS_PICK_SLUGS.has(p.slug);
+  const isAi = AI_AGENTS_SLUGS.has(p.slug);
+  const isSecurity = SECURITY_SLUGS.has(p.slug);
+  const isDevApi = DEV_APIS_SLUGS.has(p.slug);
+  const isSaas = SAAS_SLUGS.has(p.slug);
+
+  const tags: string[] = ['all'];
+  if (isMustRead) tags.push('must-read');
+  if (isEditorsPick) tags.push('editors-pick');
+  if (isAi) tags.push('ai-agents');
+  if (isSecurity) tags.push('security');
+  if (isDevApi) tags.push('dev-apis');
+  if (isSaas) tags.push('saas');
+
+  let badge = '';
+  if (isMustRead) badge = 'Must Read';
+  else if (isEditorsPick) badge = "Editor's Pick";
+  else if (p.category === 'security') badge = 'Security';
+  else if (p.category === 'api') badge = 'Dev API';
+  else if (p.category === 'ai') badge = 'AI Agent';
+  else if (p.category === 'saas') badge = 'SaaS';
+  else badge = 'Deep Dive';
+
+  return {
+    ...p,
+    indexStr: String(i + 1).padStart(2, '0'),
+    filterTags: tags.join(' '),
+    curatedBadge: badge,
+    isMustRead,
+    isEditorsPick,
+  };
+});
+
+// Categorized archive grouping for bottom archive section (matching NetworkersHome topology)
+const archiveCategories = [
+  {
+    name: 'AI & Autonomous Agents',
+    posts: allPosts.filter((p) => p.category === 'ai'),
+  },
+  {
+    name: 'Developer APIs & Tooling',
+    posts: allPosts.filter((p) => p.category === 'api'),
+  },
+  {
+    name: 'Security & Mesh Networks',
+    posts: allPosts.filter((p) => p.category === 'security'),
+  },
+  {
+    name: 'Training & Career SaaS',
+    posts: allPosts.filter((p) => p.category === 'saas' || p.category === 'training' || p.category === 'education'),
+  },
+];
+
+const featuredPost = enhancedPosts[0];
+const remainingPosts = enhancedPosts.slice(1);
 ---
 
-<BaseLayout>
-  <section class="hero">
-    <h1 class="hero-title">{SITE.brand} <span>Blog</span></h1>
-    <p class="hero-tagline">{SITE.description}</p>
+<BaseLayout fullWidth={true}>
+  <!-- Hero Section with Background Image & Dividing Line -->
+  <section slot="hero" class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        OllaSoftware <span class="hero-title-blog">Blog</span>
+      </h1>
+      <p class="hero-tagline">
+        Guides, tips, and product updates from the OllaSoftware team.
+      </p>
+
+      <!-- Sleek Search Bar -->
+      <div class="search-container">
+        <form class="search-form" id="search-form" onsubmit="event.preventDefault();">
+          <div class="search-input-wrapper">
+            <svg
+              class="search-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              type="text"
+              id="search-input"
+              class="search-input"
+              placeholder="Search guides, tips, product updates, and articles..."
+              autocomplete="off"
+              aria-label="Search articles"
+            />
+            <button
+              type="button"
+              id="clear-btn"
+              class="search-clear-btn"
+              aria-label="Clear search"
+              style="display: none;"
+            >
+              ✕
+            </button>
+          </div>
+          <button type="submit" class="search-btn" id="search-btn">
+            SEARCH
+          </button>
+        </form>
+
+        <!-- Topic Chips — click to filter posts on this page -->
+        <div class="hero-tags-wrapper">
+          <span class="hero-tags-label">Popular topics:</span>
+          <div class="hero-tags-list" id="tag-filters">
+            <button class="hero-tag-chip active" data-topic="all">All</button>
+            {popularTags.map(({ tag }) => (
+              <button class="hero-tag-chip" data-topic={tag}>#{tag}</button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  {posts.length === 0 && <p class="empty">No posts yet — check back soon.</p>}
+  <!-- Blue Filter Ribbon (Matching Ollasoftware Design) -->
+  <aside class="trust-ribbon-blue" aria-label="Filter blog categories">
+    <div class="trust-scroller mono">
+      {
+        filterCategories.map((cat, idx) => (
+          <>
+            <button
+              class={`blue-filter-btn ${idx === 0 ? 'active' : ''}`}
+              data-filter={cat.id}
+              type="button"
+              aria-label={`Filter by ${cat.label}`}
+            >
+              <span class="lbl">{cat.label}</span>
+              <span class="num">{cat.count}</span>
+            </button>
+            {idx < filterCategories.length - 1 && <span class="trust-dot">·</span>}
+          </>
+        ))
+      }
+    </div>
+  </aside>
 
-  {
-    featured && (
-      <a class="featured" href={`/blog/${featured.slug}/`}>
-        <span class="featured-label">Latest</span>
-        <h2 class="featured-title">{featured.data.title}</h2>
-        <p class="featured-desc">{featured.data.description}</p>
-        <span class="featured-more">Read article →</span>
-      </a>
-    )
-  }
+  <!-- Main 3-Column Content Layout -->
+  <div class="blog-main-layout" id="pieces">
+    <!-- Left Column: Founder Special & All 21 Pieces (Expandable Inline) -->
+    <aside class="founder-sidebar" aria-label="Founder Special & Brand Deep-Dives">
+      <div class="sidebar-sticky-inner">
+        <div class="sidebar-badge-header">
+          <span class="nh-pill-amber">FOUNDER SPECIAL</span>
+        </div>
 
-  {
-    rest.length > 0 && (
-      <div class="post-list">
-        {rest.map((p) => (
-          <PostCard
-            url={`/blog/${p.slug}/`}
-            title={p.data.title}
-            description={p.data.description}
-            pubDate={p.data.pubDate}
-            tags={p.data.tags}
-            minutes={readingTime(p.body)}
-          />
-        ))}
+        <nav class="sidebar-clean-nav" aria-label="Founder Special Articles List">
+          {enhancedPosts.slice(0, 8).map((p) => (
+            <a
+              href={`/blog/${p.slug}/`}
+              class="sidebar-clean-link sidebar-post-item"
+              data-slug={p.slug}
+              data-tags={p.filterTags}
+              data-title={p.title.toLowerCase()}
+              data-brand={p.brand.toLowerCase()}
+            >
+              {p.brand} — {p.brandTagline}
+            </a>
+          ))}
+
+          <!-- Expandable remaining posts list shown directly below on click -->
+          <div id="sidebarRemainingPosts" class="sidebar-expandable-list" style="display: none;">
+            {enhancedPosts.slice(8).map((p) => (
+              <a
+                href={`/blog/${p.slug}/`}
+                class="sidebar-clean-link sidebar-post-item"
+                data-slug={p.slug}
+                data-tags={p.filterTags}
+                data-title={p.title.toLowerCase()}
+                data-brand={p.brand.toLowerCase()}
+              >
+                {p.brand} — {p.brandTagline}
+              </a>
+            ))}
+          </div>
+        </nav>
+
+        <button
+          type="button"
+          id="toggleSidebarBtn"
+          class="sidebar-view-all-amber"
+          aria-expanded="false"
+        >
+          View All ({enhancedPosts.length}) ↓
+        </button>
       </div>
-    )
-  }
+    </aside>
+
+    <!-- Middle Column: Newest Articles & 3-Col Grid -->
+    <div class="posts-column">
+      <!-- Section Header -->
+      <div class="section-label-bar">
+        <span class="newest-pill" id="sectionLabelPill">NEWEST ARTICLES</span>
+      </div>
+
+      <!-- Featured Top Card with Watermark -->
+      <a
+        class="featured-hero-card"
+        id="featuredHeroCard"
+        href={`/blog/${featuredPost.slug}/`}
+        data-slug={featuredPost.slug}
+        data-tags={featuredPost.filterTags}
+        data-title={featuredPost.title.toLowerCase()}
+        data-brand={featuredPost.brand.toLowerCase()}
+        data-desc={featuredPost.metaDescription.toLowerCase()}
+      >
+        <div class="card-watermark" id="featuredWatermark" aria-hidden="true">
+          <img src="/nh-watermark.png" alt="" class="watermark-img" id="watermarkImg" />
+        </div>
+        <div class="featured-tags-row">
+          <div class="tags-left">
+            <span class="category-pill-brand" id="featuredBadge">{featuredPost.curatedBadge}</span>
+            <span class="card-domain-tag mono" id="featuredDomain">{featuredPost.brandDomain}</span>
+          </div>
+          <span class="new-badge-pill">NEW</span>
+        </div>
+        <h2 class="featured-title" id="featuredTitle">{featuredPost.brand} — {featuredPost.brandTagline}</h2>
+        <p class="featured-desc" id="featuredDesc">{featuredPost.metaDescription}</p>
+        <div class="featured-foot">
+          <span class="meta-read-time mono" id="featuredReadTime">{featuredPost.readingTimeMin} min read</span>
+          <span class="meta-read-link">Read article →</span>
+        </div>
+      </a>
+
+      <!-- 3-Column Card Grid -->
+      <div class="post-grid-3col" id="postGrid">
+        {
+          remainingPosts.map((p) => (
+            <a
+              class="clean-post-card post-card"
+              id={`card-${p.slug}`}
+              data-slug={p.slug}
+              href={`/blog/${p.slug}/`}
+              data-tags={p.filterTags}
+              data-title={p.title.toLowerCase()}
+              data-brand={p.brand.toLowerCase()}
+              data-desc={p.metaDescription.toLowerCase()}
+            >
+              <div class="card-top-row">
+                <span class="category-pill-brand">{p.curatedBadge}</span>
+                <span class="card-domain-tag mono">{p.brandDomain}</span>
+              </div>
+              <div class="card-content-area">
+                <h3 class="card-clean-title">{p.brand}</h3>
+                <p class="card-clean-tagline">{p.brandTagline}</p>
+                <p class="card-clean-desc">{p.metaDescription}</p>
+              </div>
+              <div class="card-clean-foot">
+                <span class="card-read-time mono">{p.readingTimeMin} min read</span>
+                <span class="card-clean-cta">Read article →</span>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+
+      <!-- No Results Found State -->
+      <div id="noResults" class="no-results mono" style="display: none;">
+        <p>No deep-dives found matching this query or filter.</p>
+        <button class="reset-filter-btn" type="button" id="resetAllBtn">View All Pieces</button>
+      </div>
+    </div>
+
+    <!-- Right Column: About Us (Seamless navigation matching NetworkersHome) -->
+    <aside class="about-sidebar" aria-label="About Ollasoftware">
+      <div class="sidebar-sticky-inner">
+        <div class="sidebar-badge-header">
+          <span class="nh-pill-purple">ABOUT US</span>
+        </div>
+
+        <nav class="sidebar-clean-nav" aria-label="About Us Links List">
+          <a href="/about/#founder" class="sidebar-clean-link">
+            Meet Founder · Dual CCIE #22239
+          </a>
+          <a href="/about/#the-why" class="sidebar-clean-link">
+            The Why · Company Story & Philosophy
+          </a>
+          <a href="/about/#team" class="sidebar-clean-link">
+            The Senior Team · Engineers & Leads
+          </a>
+          <a href="/about/#where-we-work" class="sidebar-clean-link">
+            Where We Work · 4 Global Hubs
+          </a>
+          <a href="/about/#careers" class="sidebar-clean-link">
+            Careers · Hiring 19 Open Roles
+          </a>
+          <a href="/about/#press" class="sidebar-clean-link">
+            Press & Media Coverage
+          </a>
+          <a href="https://ollasoftware.com/services/" target="_blank" rel="noopener noreferrer" class="sidebar-clean-link">
+            Services · AI, Software & AEO
+          </a>
+          <a href="https://ollasoftware.com/process/" target="_blank" rel="noopener noreferrer" class="sidebar-clean-link">
+            Process & Security · SOC 2 & GDPR
+          </a>
+        </nav>
+
+        <a href="/about/" class="sidebar-view-all-purple">
+          Explore About Page →
+        </a>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Complete Blog Archive Section (Topology from NetworkersHome Blog) -->
+  <section class="blog-archive-section">
+    <!-- Atmospheric Background Logo Watermark -->
+    <div class="archive-bg-watermark" aria-hidden="true">
+      <img src="/loogogo.png" alt="" class="archive-watermark-img" />
+    </div>
+
+    <div class="archive-inner">
+      <div class="archive-header">
+        <span class="archive-eyebrow">COMPLETE DIRECTORY</span>
+        <h2 class="archive-title">Complete blog archive</h2>
+        <p class="archive-sub">
+          Browse all {allPosts.length} brand deep-dives by category. Use the search and interactive filters above for keyword filtering, or scan the archive below for direct browsing.
+        </p>
+      </div>
+
+      <div class="archive-main-layout">
+        <!-- Directory Categories Column (Multi-column responsive layout per category) -->
+        <div class="archive-directory-col">
+          {
+            archiveCategories.map((group) => (
+              <div class="archive-category-block">
+                <div class="archive-cat-head">
+                  <h3 class="archive-cat-name">{group.name}</h3>
+                  <span class="archive-cat-count">({group.posts.length})</span>
+                </div>
+                <ul class="archive-links-grid">
+                  {group.posts.map((p) => (
+                    <li class="archive-link-item">
+                      <a href={`/blog/${p.slug}/`} class="archive-link">
+                        <span class="archive-link-brand">{p.brand}</span>
+                        <span class="archive-link-tagline">— {p.brandTagline}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+
+        <!-- Ecosystem Showcase Sidebar with /loogogo.png to visually balance and fill the section -->
+        <aside class="archive-brand-sidebar">
+          <div class="archive-brand-card">
+            <div class="archive-brand-card-top">
+              <span class="archive-brand-pill">✦ OFFICIAL DIRECTORY</span>
+            </div>
+            
+            <div class="archive-brand-img-wrap">
+              <img
+                src="/loogogo.png"
+                alt="OllaSoftware Brand Suite"
+                class="archive-brand-img"
+                loading="lazy"
+              />
+            </div>
+
+            <h3 class="archive-brand-heading">OllaSoftware Ecosystem</h3>
+            <p class="archive-brand-desc">
+              All 21 production platforms across Autonomous AI Agents, Zero Trust Security, High-Performance APIs, and Tech Career SaaS.
+            </p>
+
+            <div class="archive-brand-stats-grid">
+              <div class="archive-stat-box">
+                <span class="archive-stat-val">11</span>
+                <span class="archive-stat-lbl">AI Agents</span>
+              </div>
+              <div class="archive-stat-box">
+                <span class="archive-stat-val">4</span>
+                <span class="archive-stat-lbl">Security & VPN</span>
+              </div>
+              <div class="archive-stat-box">
+                <span class="archive-stat-val">2</span>
+                <span class="archive-stat-lbl">Dev APIs</span>
+              </div>
+              <div class="archive-stat-box">
+                <span class="archive-stat-val">4</span>
+                <span class="archive-stat-lbl">Career SaaS</span>
+              </div>
+            </div>
+
+            <div class="archive-brand-footer">
+              <a href="https://ollasoftware.com" target="_blank" rel="noopener noreferrer" class="archive-brand-cta">
+                Explore ollasoftware.com <span class="cta-arrow">→</span>
+              </a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<!-- Client Script for Real-time Search & Filter Interaction -->
+<script is:inline define:vars={{ postsData: enhancedPosts }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterBtns = document.querySelectorAll('.blue-filter-btn');
+    const gridCards = document.querySelectorAll('#postGrid .clean-post-card');
+    const sidebarItems = document.querySelectorAll('.sidebar-post-item');
+    const noResults = document.getElementById('noResults');
+    const resetAllBtn = document.getElementById('resetAllBtn');
+    const searchInput = document.getElementById('search-input');
+    const clearBtn = document.getElementById('clear-btn');
+    const topicChips = document.querySelectorAll('.hero-tag-chip');
+
+    const featuredHeroCard = document.getElementById('featuredHeroCard');
+    const featuredWatermark = document.getElementById('featuredWatermark');
+    const watermarkImg = document.getElementById('watermarkImg');
+    const sectionLabelPill = document.getElementById('sectionLabelPill');
+    const featuredBadge = document.getElementById('featuredBadge');
+    const featuredDomain = document.getElementById('featuredDomain');
+    const featuredTitle = document.getElementById('featuredTitle');
+    const featuredDesc = document.getElementById('featuredDesc');
+    const featuredReadTime = document.getElementById('featuredReadTime');
+
+    const watermarkMap = {
+      'networkershome': '/nh-watermark.png',
+      '21tunnel': '/watermarks/21tunnel.jpg',
+      'meshwg': '/watermarks/meshwg.jpg',
+      'browserfog': '/watermarks/browserfog.jpg',
+      'quicksdwan': '/watermarks/quicksdwan.jpg',
+      'nhprep': '/watermarks/nhprep.jpg',
+      'ollima': '/watermarks/21tunnel.jpg',
+      'crawlcrawl': '/watermarks/browserfog.jpg',
+      'memfog': '/watermarks/browserfog.jpg',
+      'aeoniti': '/watermarks/browserfog.jpg',
+      'ollagraph': '/watermarks/21tunnel.jpg',
+      'ollastack': '/watermarks/21tunnel.jpg',
+      'ollanode': '/watermarks/21tunnel.jpg',
+      'olladns': '/watermarks/quicksdwan.jpg',
+      'quickztna': '/watermarks/quicksdwan.jpg',
+      'ollavpn': '/watermarks/meshwg.jpg',
+      'freefreecv': '/watermarks/nhprep.jpg',
+      'ollasync': '/watermarks/nhprep.jpg',
+      'ollasuper': '/watermarks/21tunnel.jpg',
+      'ollabear': '/watermarks/browserfog.jpg',
+      '24observe': '/watermarks/21tunnel.jpg'
+    };
+
+    const labelMap = {
+      'all': 'NEWEST ARTICLES',
+      'must-read': 'FEATURED · MUST READ',
+      'editors-pick': "FEATURED · EDITOR'S PICK",
+      'ai-agents': 'FEATURED · AI & AGENTS',
+      'security': 'FEATURED · SECURITY & VPN',
+      'dev-apis': 'FEATURED · DEV APIS',
+      'saas': 'FEATURED · SAAS'
+    };
+
+    let activeFilter = 'all';
+    let activeTopic = 'all'; // real content tag from post.tags
+
+    function applyFilterAndSearch() {
+      const query = (searchInput?.value || '').trim().toLowerCase();
+
+      if (clearBtn) {
+        clearBtn.style.display = query.length > 0 ? 'inline-flex' : 'none';
+      }
+
+      // Filter matching posts
+      const matchingPosts = postsData.filter((p) => {
+        const curatedTags = (p.filterTags || '').split(' ');
+        const matchesCategory = activeFilter === 'all' || curatedTags.includes(activeFilter);
+        // Real tag filter: check actual post.tags array
+        const matchesTopic = activeTopic === 'all' || (Array.isArray(p.tags) && p.tags.includes(activeTopic));
+        const matchesQuery =
+          !query ||
+          p.title.toLowerCase().includes(query) ||
+          p.brand.toLowerCase().includes(query) ||
+          p.metaDescription.toLowerCase().includes(query) ||
+          p.brandDomain.toLowerCase().includes(query) ||
+          (p.category || '').toLowerCase().includes(query) ||
+          (Array.isArray(p.tags) && p.tags.some(t => t.includes(query)));
+
+        return matchesCategory && matchesTopic && matchesQuery;
+      });
+
+      // Update Section Header Pill
+      if (sectionLabelPill) {
+        sectionLabelPill.textContent = query
+          ? `SEARCH RESULTS (${matchingPosts.length})`
+          : labelMap[activeFilter] || 'FEATURED ARTICLES';
+      }
+
+      if (matchingPosts.length > 0) {
+        const featured = matchingPosts[0];
+        const remainingSlugs = new Set(matchingPosts.slice(1).map((p) => p.slug));
+
+        // Update Featured Card
+        if (featuredHeroCard) {
+          featuredHeroCard.style.display = 'flex';
+          featuredHeroCard.href = `/blog/${featured.slug}/`;
+          if (featuredBadge) featuredBadge.textContent = featured.curatedBadge;
+          if (featuredDomain) featuredDomain.textContent = featured.brandDomain;
+          if (featuredTitle) featuredTitle.textContent = `${featured.brand} — ${featured.brandTagline}`;
+          if (featuredDesc) featuredDesc.textContent = featured.metaDescription;
+          if (featuredReadTime) featuredReadTime.textContent = `${featured.readingTimeMin} min read`;
+
+          // Watermark
+          if (featuredWatermark && watermarkImg) {
+            const customWatermark = watermarkMap[featured.slug];
+            if (customWatermark) {
+              watermarkImg.src = customWatermark;
+              featuredWatermark.style.display = 'flex';
+            } else {
+              featuredWatermark.style.display = 'none';
+            }
+          }
+        }
+
+        // Show remaining cards in grid
+        gridCards.forEach((card) => {
+          const slug = card.getAttribute('data-slug');
+          if (remainingSlugs.has(slug)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (noResults) noResults.style.display = 'none';
+      } else {
+        if (featuredHeroCard) featuredHeroCard.style.display = 'none';
+        gridCards.forEach((card) => (card.style.display = 'none'));
+        if (noResults) noResults.style.display = 'block';
+      }
+
+      // Update Sidebar Items
+      sidebarItems.forEach((item) => {
+        const tags = (item.getAttribute('data-tags') || '').split(' ');
+        const brand = item.getAttribute('data-brand') || '';
+        const title = item.getAttribute('data-title') || '';
+        const matchesCategory = activeFilter === 'all' || tags.includes(activeFilter);
+        const matchesQuery = !query || brand.includes(query) || title.includes(query);
+
+        if (matchesCategory && matchesQuery) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    // Category button event listeners
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        activeFilter = btn.getAttribute('data-filter') || 'all';
+        filterBtns.forEach((b) => b.classList.toggle('active', b === btn));
+        applyFilterAndSearch();
+      });
+    });
+
+    // Search Input listeners
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilterAndSearch);
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        applyFilterAndSearch();
+        searchInput?.focus();
+      });
+    }
+
+    if (resetAllBtn) {
+      resetAllBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        activeFilter = 'all';
+        filterBtns.forEach((b) => b.classList.toggle('active', b.getAttribute('data-filter') === 'all'));
+        applyFilterAndSearch();
+      });
+    }
+
+    // Topic chips listener — filters posts inline using real post.tags
+    topicChips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        topicChips.forEach((c) => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeTopic = chip.getAttribute('data-topic') || 'all';
+        // Reset category filter and search when a topic chip is clicked
+        activeFilter = 'all';
+        filterBtns.forEach((b) => b.classList.toggle('active', b.getAttribute('data-filter') === 'all'));
+        if (searchInput) searchInput.value = '';
+        applyFilterAndSearch();
+      });
+    });
+
+    // Toggle sidebar expandable list
+    const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+    const sidebarRemainingPosts = document.getElementById('sidebarRemainingPosts');
+    if (toggleSidebarBtn && sidebarRemainingPosts) {
+      toggleSidebarBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isHidden = sidebarRemainingPosts.style.display === 'none';
+        if (isHidden) {
+          sidebarRemainingPosts.style.display = 'flex';
+          toggleSidebarBtn.textContent = 'Show Less ↑';
+          toggleSidebarBtn.setAttribute('aria-expanded', 'true');
+        } else {
+          sidebarRemainingPosts.style.display = 'none';
+          toggleSidebarBtn.textContent = `View All (${postsData.length}) ↓`;
+          toggleSidebarBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  });
+</script>

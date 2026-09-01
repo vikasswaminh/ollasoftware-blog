@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 100" fill="none">
+  <!-- Icon on Left -->
+  <g transform="translate(0, -10) scale(0.24)">
+    <!-- Base curved ground sweep -->
+    <path d="M 20 480 C 160 445, 340 445, 480 480 C 340 458, 160 458, 20 480 Z" fill="#00A3FF"/>
+    
+    <!-- Left Building -->
+    <polygon points="175,290 205,275 205,445 175,445" fill="#0080d0"/>
+    <polygon points="205,190 220,182 220,275 205,275" fill="#38BDF8"/>
+
+    <!-- Center Building (Tallest) -->
+    <polygon points="225,50 258,25 298,80 298,260 270,290 270,445 220,445 220,165 242,130 225,50" fill="#00A3FF"/>
+    <!-- Center Building Bright Cyan Facade Panel -->
+    <polygon points="236,162 266,132 266,435 236,435" fill="#38BDF8"/>
+    <!-- Vertical text on center facade -->
+    <text x="-415" y="254" transform="rotate(-90)" font-family="'Lato', -apple-system, sans-serif" font-weight="900" font-size="22" fill="#080f1e" letter-spacing="1">ollasoftware</text>
+
+    <!-- Right Building with Stripes -->
+    <polygon points="275,260 300,285 300,430 275,430" fill="#0080d0"/>
+    <polygon points="298,80 308,98 308,260 298,260" fill="#38BDF8"/>
+    <!-- Right Wing Stripes -->
+    <polygon points="278,300 322,330 322,345 278,315" fill="#00A3FF"/>
+    <polygon points="278,335 322,365 322,380 278,350" fill="#00A3FF"/>
+    <polygon points="278,370 322,400 322,415 278,385" fill="#00A3FF"/>
+    <polygon points="278,405 322,435 322,442 278,420" fill="#00A3FF"/>
+  </g>
+
+  <!-- Wordmark Text "ollasoftware" in Bold White -->
+  <text x="125" y="68" font-family="'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="44" fill="#FFFFFF" letter-spacing="-1.5">ollasoftware</text>
+</svg>

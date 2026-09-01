@@ -3,7 +3,7 @@ title: 'Welcome to the OllaSoftware blog'
 description: 'Product news, how-tos, and practical tips from the OllaSoftware team.'
 pubDate: 2026-08-27
 author: 'OllaSoftware Team'
-tags: ['announcements']
+tags: ['must-read', 'saas']
 ---
 
 Welcome! This is the new home for **OllaSoftware** guides, product updates, and tips.

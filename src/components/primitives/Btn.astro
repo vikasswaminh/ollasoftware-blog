@@ -1,0 +1,66 @@
+---
+interface Props {
+  primary?: boolean;
+  href?: string;
+  size?: 'sm' | 'md';
+  type?: 'button' | 'submit';
+  ariaLabel?: string;
+  target?: string;
+  rel?: string;
+}
+
+const { primary = false, href, size = 'md', type = 'button', ariaLabel, target, rel } = Astro.props;
+const cls = ['btn', primary ? 'primary' : 'outline', `size-${size}`];
+const Tag = href ? 'a' : 'button';
+const extra = href ? { href, target, rel } : { type };
+---
+<Tag class:list={[...cls]} aria-label={ariaLabel} {...extra}>
+  <slot />
+</Tag>
+
+<style>
+  .btn {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: 100px;
+    transition: all 0.2s ease;
+  }
+
+  .btn.size-sm { padding: 8px 18px; font-size: 13px; min-height: 38px; border-radius: 100px; }
+  .btn.size-md { padding: 12px 26px; font-size: 15px; min-height: 48px; border-radius: 100px; }
+
+  .btn.primary {
+    border: none;
+    background: #1D6AF3;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(29, 106, 243, 0.28);
+  }
+  .btn.primary:hover {
+    background: #1557D0;
+    box-shadow: 0 6px 20px rgba(29, 106, 243, 0.38);
+    transform: translateY(-1px);
+  }
+  .btn.outline {
+    border: 1.5px solid #2563eb;
+    background: #ffffff;
+    color: #2563eb !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+  }
+  .btn.outline:hover {
+    border-color: #1d4ed8;
+    background: #eff6ff;
+    color: #1d4ed8 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.16);
+  }
+  .btn:active { transform: translateY(1px); }
+</style>

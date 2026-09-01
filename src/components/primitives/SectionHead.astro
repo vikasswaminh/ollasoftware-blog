@@ -1,0 +1,77 @@
+---
+import Tag from './Tag.astro';
+import FadeInText from "@astroanimate/core/FadeInText";
+
+interface Props {
+  tag?: string;
+  title: string;
+  sub?: string;
+}
+
+const { tag, title, sub } = Astro.props;
+---
+<div class="section-head">
+  <div class="text">
+    {tag && <Tag>{tag}</Tag>}
+    <FadeInText enhance={true} duration={0.7} yOffset={24}>
+      <h2 set:html={title} />
+    </FadeInText>
+    {sub && (
+      <FadeInText enhance={true} duration={0.8} delay={0.1} yOffset={20}>
+        <p class="sub">{sub}</p>
+      </FadeInText>
+    )}
+  </div>
+  {Astro.slots.has('right') && (
+    <div class="right">
+      <slot name="right" />
+    </div>
+  )}
+</div>
+
+<style>
+  .section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .text { max-width: 720px; }
+
+  h2 {
+    margin: 12px 0 8px;
+    font-size: clamp(24px, 4.2vw, 42px);
+    letter-spacing: -1px;
+    font-weight: 700;
+    color: var(--o-ink);
+    line-height: 1.1;
+    overflow-wrap: break-word;
+    font-family: "Lato", sans-serif;
+  }
+  h2 :global(em) { font-style: normal; color: var(--o-accent); }
+
+  .sub {
+    font-family: "Lato", sans-serif;
+    font-size: 13.5px;
+    color: #64748b;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 580px;
+  }
+
+  @media (max-width: 640px) {
+    .section-head {
+      margin-bottom: 18px;
+      gap: 14px;
+    }
+    h2 {
+      font-size: clamp(20px, 5.5vw, 26px);
+      margin: 8px 0 6px;
+    }
+    .sub {
+      font-size: 12px;
+    }
+  }
+</style>
