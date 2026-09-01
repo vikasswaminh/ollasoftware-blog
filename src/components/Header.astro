@@ -17,7 +17,7 @@ const isAboutActive = path.startsWith('/about');
           <span class="brand-name">ollasoftware</span><span class="brand-blog-text">blog</span>
         </span>
       </a>
-      <AnimatedSearch />
+      {isBlogActive && <AnimatedSearch />}
     </div>
 
     <!-- Right: Desktop Nav Links + CTA Button -->
