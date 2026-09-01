@@ -19,6 +19,79 @@ interface Props {
 const { tag, posts } = Astro.props;
 const allTags = getAllTags();
 
+// Curated technical definitions dictionary for key tags
+const topicDefinitions: Record<string, string> = {
+  'zero-trust': 'Zero Trust is a network security model enforcing strict identity verification for every person and device accessing resources on a private network.',
+  'ztna': 'Zero Trust Network Access (ZTNA) creates an identity- and context-based boundary around applications, isolating them from public access and eliminating implicit trust.',
+  'sd-wan': 'Software-Defined Wide Area Network (SD-WAN) decouples network hardware from control mechanisms to optimize routing across WAN connections with dynamic path selection.',
+  'aeo': 'Answer Engine Optimization (AEO) is the practice of optimizing digital assets for citation and recommendation within generative AI engines like ChatGPT, Gemini, and Perplexity.',
+  'answer-engine-optimization': 'AEO focuses on structuring content, brand mentions, and citable evidence to ensure LLMs correctly attribute and recommend your brand in generated answers.',
+  'ai-search': 'AI Search replaces traditional keyword rank tracking with generative answer indexing, measuring brand visibility across AI assistants and LLM knowledge graphs.',
+  'web-crawler': 'AI Web Crawling encompasses high-throughput HTTP fetchers designed to collect, clean, and convert raw HTML into markdown for LLM context windows.',
+  'agent-memory': 'Agentic Memory provides state persistence across multi-turn LLM interactions, storing episodic and semantic memory graphs for autonomous AI workflows.',
+  'mcp-native': 'Model Context Protocol (MCP) enables seamless, standardized tool execution and resource retrieval between LLM applications and external infrastructure.',
+  'cisco': 'Cisco certifications (CCNA, CCIE) establish world-class engineering mastery across enterprise routing, switching, security, and cloud networking topologies.',
+  'ccie': 'Cisco Certified Internetwork Expert (CCIE) is the premier technical certification in networking and security, held by senior network architects worldwide.',
+  'rag': 'Retrieval-Augmented Generation (RAG) enhances LLM outputs by fetching relevant external documents from vector stores before generating answers.',
+  'llm-ops': 'LLM Ops covers operational telemetry, cost monitoring, fallback routing, and latency evaluation for production AI deployments.',
+};
+
+const topicOverview = topicDefinitions[tag.toLowerCase()] || `Technical deep-dive collection covering industry standards, implementation patterns, and production architectures for #${tag}.`;
+
+// Compute related sibling tags from co-occurring posts
+const siblingTagCounts = new Map<string, number>();
+for (const p of posts) {
+  for (const t of p.tags) {
+    if (t !== tag) {
+      siblingTagCounts.set(t, (siblingTagCounts.get(t) || 0) + 1);
+    }
+  }
+}
+const relatedTags = Array.from(siblingTagCounts.entries())
+  .sort((a, b) => b[1] - a[1])
+  .map(([t]) => t)
+  .slice(0, 6);
+
+// Topic-to-Product Recommendation Mapping
+const productMappings: Array<{ tags: string[]; brand: string; domain: string; desc: string }> = [
+  {
+    tags: ['sd-wan', 'zero-trust', 'ztna', 'wireguard', 'vpn', 'mesh-vpn', 'quicksdwan'],
+    brand: 'QuickSDWAN',
+    domain: 'quicksdwan.com',
+    desc: 'Zero-config, high-throughput SD-WAN & ZTNA mesh networking for enterprise teams.',
+  },
+  {
+    tags: ['aeo', 'ai-search', 'answer-engine-optimization', 'llm-visibility', 'seo'],
+    brand: 'Aeoniti',
+    domain: 'aeoniti.com',
+    desc: 'AI recommendation intelligence platform tracking ChatGPT, Gemini & Google AI Overview.',
+  },
+  {
+    tags: ['web-crawler', 'agent-data', 'data-collection', 'crawling', 'crawlcrawl'],
+    brand: 'Crawlcrawl',
+    domain: 'crawlcrawl.com',
+    desc: 'High-grade AI web crawler & HTML-to-Markdown extraction engine for LLM pipelines.',
+  },
+  {
+    tags: ['llm-router', 'ai-agents', 'agent-memory', 'multi-model', 'agent-orchestration', 'ollima'],
+    brand: 'Ollima',
+    domain: 'ollima.com',
+    desc: 'Production LLM router & agent orchestrator with hard daily cost caps and multi-model failover.',
+  },
+  {
+    tags: ['networking-training', 'cisco', 'ccie', 'ccna', 'network-certification', 'education', 'networkershome'],
+    brand: 'Networkers Home',
+    domain: 'networkershome.com',
+    desc: "India's premier networking & cybersecurity institute since 2007. 45,000+ alumni placed.",
+  },
+];
+
+const matchedProduct = productMappings.find(p => p.tags.some(t => t === tag.toLowerCase()));
+
+// Topic Depth Statistics
+const totalWordCount = posts.reduce((sum, p) => sum + (p.wordCount || 5000), 0);
+const totalReadingTime = posts.reduce((sum, p) => sum + p.readingTimeMin, 0);
+
 const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
   ai:       { bg: '#f0fdf4', text: '#16a34a', border: '#bbf7d0' },
   api:      { bg: '#eff6ff', text: '#2563eb', border: '#bfdbfe' },
@@ -29,10 +102,14 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
 };
 ---
 
-<Layout title={`#${tag} — OllaSoftware Blog`} description={`All posts tagged #${tag}. ${posts.length} deep-dive${posts.length !== 1 ? 's' : ''} found.`}>
+<Layout
+  title={`#${tag} — OllaSoftware Blog`}
+  description={topicOverview}
+  keywords={[tag, ...relatedTags]}
+>
   <div class="tag-page-wrap">
 
-    <!-- Left Sidebar: All Tags -->
+    <!-- Left Sidebar: All Tags Directory -->
     <aside class="tags-sidebar">
       <div class="sidebar-card">
         <div class="sidebar-header">
@@ -66,36 +143,106 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
       </div>
     </aside>
 
-    <!-- Right: Posts for selected tag -->
+    <!-- Right Main Area: Complete Tag Suite -->
     <main class="tag-main">
-      <!-- Header -->
+      <!-- Header Navigation & Tag Title -->
       <div class="tag-main-header">
-        <a href="/tags/" class="tag-back mono">← All tags</a>
+        <a href="/tags/" class="tag-back mono">← All tags & categories</a>
         <div class="tag-hero-row">
           <div>
             <h1 class="tag-h1">
               <span class="tag-hash">#</span>{tag}
             </h1>
             <p class="tag-sub">
-              {posts.length} deep-dive{posts.length !== 1 ? 's' : ''} tagged with this topic
+              {posts.length} deep-dive{posts.length !== 1 ? 's' : ''} covering this topic
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Posts -->
+      <!-- Feature 1: Topic Definition Card ("What is #[tag]?") -->
+      <div class="topic-definition-card">
+        <div class="definition-header">
+          <span class="def-badge mono">TOPIC PRIMER</span>
+          <span class="def-title">What is #{tag}?</span>
+        </div>
+        <p class="def-text">{topicOverview}</p>
+      </div>
+
+      <!-- Feature 2: Topic Reading Depth Statistics Bar -->
+      <div class="topic-stats-bar">
+        <div class="stat-pill">
+          <span class="stat-num mono">{posts.length}</span>
+          <span class="stat-label">Deep Dive{posts.length !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="stat-divider">·</div>
+        <div class="stat-pill">
+          <span class="stat-num mono">~{totalWordCount.toLocaleString()}</span>
+          <span class="stat-label">Total Words</span>
+        </div>
+        <div class="stat-divider">·</div>
+        <div class="stat-pill">
+          <span class="stat-num mono">{totalReadingTime} Min</span>
+          <span class="stat-label">Total Reading Time</span>
+        </div>
+      </div>
+
+      <!-- Feature 3: Related Sibling Tag Clusters -->
+      {relatedTags.length > 0 && (
+        <div class="related-tags-box">
+          <span class="related-label mono">RELATED TOPICS:</span>
+          <div class="related-tags-wrap">
+            {relatedTags.map((rt) => (
+              <a href={`/tags/${rt}/`} class="related-tag-btn mono">
+                #{rt}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- Feature 4: Topic-to-Product Solution Mapping Card -->
+      {matchedProduct && (
+        <div class="product-mapping-card">
+          <div class="product-card-top">
+            <span class="product-badge mono">OLLASOFTWARE SOLUTION</span>
+            <span class="product-domain mono">{matchedProduct.domain}</span>
+          </div>
+          <h3 class="product-title">{matchedProduct.brand}</h3>
+          <p class="product-desc">{matchedProduct.desc}</p>
+          <a href={`https://${matchedProduct.domain}`} target="_blank" rel="noopener noreferrer" class="product-link">
+            Explore {matchedProduct.brand} Platform →
+          </a>
+        </div>
+      )}
+
+      <!-- Feature 5: In-Tag Article Sorting Controls & Post List Header -->
+      <div class="posts-list-header">
+        <span class="list-heading">Articles in #{tag}</span>
+        <div class="sort-controls">
+          <span class="sort-label mono">Sort by:</span>
+          <button class="sort-btn active" id="sort-recent">Most Recent</button>
+          <button class="sort-btn" id="sort-longest">Longest Read</button>
+          <button class="sort-btn" id="sort-quickest">Quickest Read</button>
+        </div>
+      </div>
+
+      <!-- Posts List -->
       {posts.length === 0 ? (
         <div class="tag-empty">
-          <div class="tag-empty-icon">🔍</div>
-          <p>No posts yet for <strong>#{tag}</strong></p>
+          <p>No articles found for <strong>#{tag}</strong></p>
           <a href="/tags/">Browse all tags →</a>
         </div>
       ) : (
-        <div class="tag-posts-list">
+        <div class="tag-posts-list" id="tag-posts-list">
           {posts.map((post) => {
             const colors = categoryColors[post.category] ?? { bg: '#f8fafc', text: '#475467', border: '#e2e8f0' };
             return (
-              <article class="tag-card-item">
+              <article
+                class="tag-card-item"
+                data-read-time={post.readingTimeMin}
+                data-date={post.publishedOn}
+              >
                 <!-- Category + Domain row -->
                 <div class="tag-card-top">
                   <span class="post-cat" style={`background:${colors.bg}; color:${colors.text}; border-color:${colors.border}`}>
@@ -147,7 +294,7 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     display: grid;
     grid-template-columns: 260px 1fr;
     gap: 2rem;
-    max-width: 1100px;
+    max-width: 1140px;
     margin: 0 auto;
     padding: 2.5rem 1.5rem 5rem;
     align-items: start;
@@ -168,12 +315,6 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     }
     .sidebar-tags-list {
       max-height: 220px;
-    }
-    .tag-main-header .tag-h1 {
-      font-size: 1.85rem;
-    }
-    .post-card-body {
-      padding: 1.25rem 1.1rem;
     }
   }
 
@@ -234,11 +375,6 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
   .sidebar-search-icon {
     color: #94a3b8;
     flex-shrink: 0;
-    transition: color 0.15s ease;
-  }
-
-  .sidebar-search-box:focus-within .sidebar-search-icon {
-    color: #2563eb;
   }
 
   .sidebar-search-input {
@@ -277,9 +413,7 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     gap: 0.5rem;
   }
 
-  .sidebar-tag-row:last-child {
-    border-bottom: none;
-  }
+  .sidebar-tag-row:last-child { border-bottom: none; }
 
   .sidebar-tag-row:hover {
     background: #eff6ff;
@@ -313,13 +447,11 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     flex-shrink: 0;
   }
 
-  /* ── Right main area ── */
-  .tag-main {
-    min-width: 0;
-  }
+  /* ── Right Main Area ── */
+  .tag-main { min-width: 0; }
 
   .tag-main-header {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
 
   .tag-back {
@@ -328,7 +460,7 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     color: #64748b;
     text-decoration: none;
     display: inline-block;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     transition: color 0.15s;
   }
 
@@ -350,9 +482,7 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     line-height: 1.1;
   }
 
-  .tag-hash {
-    color: #2563eb;
-  }
+  .tag-hash { color: #2563eb; }
 
   .tag-sub {
     color: #64748b;
@@ -360,7 +490,236 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     margin: 0;
   }
 
-  /* ── Empty state ── */
+  /* Feature 1: Topic Definition Card */
+  .topic-definition-card {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-left: 4px solid #2563eb;
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+  }
+
+  .definition-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .def-badge {
+    font-size: 10px;
+    font-weight: 800;
+    color: #2563eb;
+    background: rgba(37, 99, 235, 0.08);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .def-title {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .def-text {
+    font-size: 0.92rem;
+    color: #334155;
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  /* Feature 2: Topic Reading Depth Statistics Bar */
+  .topic-stats-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-num {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #2563eb;
+  }
+
+  .stat-label {
+    font-size: 0.82rem;
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  .stat-divider {
+    color: #cbd5e1;
+    font-weight: 800;
+  }
+
+  /* Feature 3: Related Tags Box */
+  .related-tags-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .related-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #64748b;
+    letter-spacing: 0.5px;
+  }
+
+  .related-tags-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .related-tag-btn {
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .related-tag-btn:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+    background: #eff6ff;
+  }
+
+  /* Feature 4: Topic-to-Product Recommendation Banner */
+  .product-mapping-card {
+    background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+    border: 1.5px solid #bfdbfe;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.06);
+  }
+
+  .product-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .product-badge {
+    font-size: 10px;
+    font-weight: 800;
+    color: #2563eb;
+    letter-spacing: 0.5px;
+  }
+
+  .product-domain {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  .product-title {
+    margin: 0 0 4px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .product-desc {
+    font-size: 0.88rem;
+    color: #475467;
+    margin: 0 0 12px;
+    line-height: 1.5;
+  }
+
+  .product-link {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #2563eb;
+    text-decoration: none;
+    transition: color 0.15s ease;
+    display: inline-block;
+  }
+
+  .product-link:hover { color: #1d4ed8; text-decoration: underline; }
+
+  /* Feature 5: In-Tag Article Sorting Controls Header */
+  .posts-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1.5px solid #e2e8f0;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .list-heading {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .sort-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sort-label {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+
+  .sort-btn {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #475467;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .sort-btn.active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+  }
+
+  .sort-btn:hover:not(.active) {
+    border-color: #2563eb;
+    color: #2563eb;
+    background: #eff6ff;
+  }
+
+  /* Empty state */
   .tag-empty {
     text-align: center;
     padding: 3rem 2rem;
@@ -370,10 +729,7 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     color: #64748b;
   }
 
-  .tag-empty-icon { font-size: 2rem; margin-bottom: 0.75rem; }
-  .tag-empty a { color: #2563eb; font-weight: 600; text-decoration: none; }
-
-  /* ── Posts list ── */
+  /* Posts list */
   .tag-posts-list {
     display: flex;
     flex-direction: column;
@@ -442,9 +798,7 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     transition: color 0.15s ease;
   }
 
-  .post-brand-link:hover {
-    color: #1d4ed8;
-  }
+  .post-brand-link:hover { color: #1d4ed8; }
 
   .post-tagline {
     font-size: 0.9rem;
@@ -482,7 +836,6 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     gap: 0.45rem;
   }
 
-  /* Real button style for tags */
   .post-tag {
     font-size: 0.78rem;
     font-weight: 700;
@@ -507,22 +860,11 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
   }
 
-  .post-tag:active {
-    transform: translateY(0);
-  }
-
   .post-tag-active {
     background: #1d4ed8;
     color: #ffffff;
     border-color: #1d4ed8;
     box-shadow: 0 2px 5px rgba(29, 78, 216, 0.3);
-  }
-
-  .post-tag-active:hover {
-    background: #1e40af;
-    border-color: #1e40af;
-    color: #ffffff;
-    box-shadow: 0 3px 8px rgba(30, 64, 175, 0.35);
   }
 
   .post-read-link {
@@ -541,8 +883,7 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     transform: translateX(2px);
   }
 
-  /* mono helper */
-  .mono { font-family: 'Courier New', Courier, monospace; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 </style>
 
 <script is:inline>
@@ -551,6 +892,7 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
     var tagRows = document.querySelectorAll('#sidebar-tags-list .sidebar-tag-row');
     var countBadge = document.getElementById('sidebar-count');
 
+    // Sidebar search filter
     if (searchInput) {
       searchInput.addEventListener('input', function() {
         var query = (this.value || '').trim().toLowerCase().replace(/^#/, '');
@@ -566,9 +908,48 @@ const categoryColors: Record<string, { bg: string; text: string; border: string 
           }
         });
 
-        if (countBadge) {
-          countBadge.textContent = visibleCount;
-        }
+        if (countBadge) countBadge.textContent = visibleCount;
+      });
+    }
+
+    // In-tag article sorting script
+    var sortRecentBtn = document.getElementById('sort-recent');
+    var sortLongestBtn = document.getElementById('sort-longest');
+    var sortQuickestBtn = document.getElementById('sort-quickest');
+    var postsList = document.getElementById('tag-posts-list');
+
+    if (postsList && sortRecentBtn && sortLongestBtn && sortQuickestBtn) {
+      var articles = Array.from(postsList.children);
+
+      function setSortActive(btn) {
+        [sortRecentBtn, sortLongestBtn, sortQuickestBtn].forEach(function(b) {
+          b.classList.remove('active');
+        });
+        btn.classList.add('active');
+      }
+
+      sortRecentBtn.addEventListener('click', function() {
+        setSortActive(this);
+        articles.sort(function(a, b) {
+          return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+        });
+        articles.forEach(function(art) { postsList.appendChild(art); });
+      });
+
+      sortLongestBtn.addEventListener('click', function() {
+        setSortActive(this);
+        articles.sort(function(a, b) {
+          return parseInt(b.getAttribute('data-read-time') || '0', 10) - parseInt(a.getAttribute('data-read-time') || '0', 10);
+        });
+        articles.forEach(function(art) { postsList.appendChild(art); });
+      });
+
+      sortQuickestBtn.addEventListener('click', function() {
+        setSortActive(this);
+        articles.sort(function(a, b) {
+          return parseInt(a.getAttribute('data-read-time') || '0', 10) - parseInt(b.getAttribute('data-read-time') || '0', 10);
+        });
+        articles.forEach(function(art) { postsList.appendChild(art); });
       });
     }
   });
