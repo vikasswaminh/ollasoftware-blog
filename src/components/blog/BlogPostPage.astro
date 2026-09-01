@@ -763,10 +763,27 @@ const categoryTagMap: Record<string, string> = {
     color: var(--o-ink);
     margin: 0 0 18px;
   }
-  .sec p :global(a) {
-    color: var(--o-accent);
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1px;
+  .sec p :global(a),
+  .sec li :global(a),
+  .sub p :global(a),
+  .sub li :global(a),
+  .post :global(a:not(.btn):not(.post-tag):not(.directory-link):not(.article-tag-btn):not(.post-brand-link):not(.post-read-link)) {
+    color: #2563eb !important;
+    font-weight: 600 !important;
+    text-decoration: underline !important;
+    text-underline-offset: 3px !important;
+    text-decoration-color: rgba(37, 99, 235, 0.4) !important;
+    text-decoration-thickness: 1.5px !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .sec p :global(a:hover),
+  .sec li :global(a:hover),
+  .sub p :global(a:hover),
+  .sub li :global(a:hover),
+  .post :global(a:not(.btn):not(.post-tag):not(.directory-link):not(.article-tag-btn):not(.post-brand-link):not(.post-read-link):hover) {
+    color: #1d4ed8 !important;
+    text-decoration-color: #1d4ed8 !important;
   }
 
   .sub {

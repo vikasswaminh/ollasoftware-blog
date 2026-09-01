@@ -774,6 +774,21 @@ main.container {
   color: #334155;
 }
 
+.prose a {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(37, 99, 235, 0.4);
+  text-decoration-thickness: 1.5px;
+  transition: all 0.15s ease;
+}
+
+.prose a:hover {
+  color: #1d4ed8;
+  text-decoration-color: #1d4ed8;
+}
+
 .prose > * + * {
   margin-top: 1.25rem;
 }
