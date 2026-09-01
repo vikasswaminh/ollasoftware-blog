@@ -71,7 +71,7 @@ const categoryTagMap: Record<string, string> = {
       <h1 class="hero-h1">{post.heroH1}</h1>
 
       {post.heroSub && (
-        <p class="hero-sub mono">{post.heroSub}</p>
+        <p class="hero-sub">{post.heroSub}</p>
       )}
 
       <div class="hero-actions">
@@ -274,12 +274,34 @@ const categoryTagMap: Record<string, string> = {
 <style>
   /* Center-Aligned Blog Hero */
   .blog-hero-centered {
-    padding: 72px 24px 60px;
-    border-bottom: 1px solid var(--o-line);
+    width: 100%;
+    background-color: #f8fafc;
+    background-image: url('/hero-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     text-align: center;
-    background: var(--o-bg);
+    padding: 72px 24px 60px;
+    border-bottom: 1.5px solid var(--o-line, #e2e8f0);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
     position: relative;
+    overflow: hidden;
     box-sizing: border-box;
+  }
+
+  /* High-tech Blueprint Grid overlay matching main blog hero */
+  .blog-hero-centered::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-size: 32px 32px;
+    background-image: 
+      linear-gradient(to right, rgba(29, 106, 243, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(29, 106, 243, 0.08) 1px, transparent 1px);
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 30%, transparent 95%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 30%, transparent 95%);
+    pointer-events: none;
+    z-index: 1;
   }
 
   .hero-inner {
@@ -288,6 +310,8 @@ const categoryTagMap: Record<string, string> = {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+    z-index: 2;
   }
 
   .crumbs {
