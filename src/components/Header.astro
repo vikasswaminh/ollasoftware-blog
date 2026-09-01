@@ -1,4 +1,6 @@
 ---
+import AnimatedSearch from './AnimatedSearch.astro';
+
 const path = Astro.url.pathname;
 const isBlogActive = path === '/' || path.startsWith('/blog/');
 const isTagsActive = path.startsWith('/tags');
@@ -7,13 +9,16 @@ const isAboutActive = path.startsWith('/about');
 
 <header class="site-header" id="site-header">
   <div class="header-inner">
-    <!-- Left: Brand Logo Image + ollasoftware (blue) + blog (blue) -->
-    <a class="brand" href="/" aria-label="OllaSoftware Blog Home">
-      <img src="/logo.png" alt="OllaSoftware Logo" class="brand-logo-img" />
-      <span class="brand-text-wrapper">
-        <span class="brand-name">ollasoftware</span><span class="brand-blog-text">blog</span>
-      </span>
-    </a>
+    <!-- Left: Brand Logo Image + ollasoftware (blue) + blog (blue) + Animated Search -->
+    <div class="brand-left-group">
+      <a class="brand" href="/" aria-label="OllaSoftware Blog Home">
+        <img src="/logo.png" alt="OllaSoftware Logo" class="brand-logo-img" />
+        <span class="brand-text-wrapper">
+          <span class="brand-name">ollasoftware</span><span class="brand-blog-text">blog</span>
+        </span>
+      </a>
+      <AnimatedSearch />
+    </div>
 
     <!-- Right: Desktop Nav Links + CTA Button -->
     <div class="nav-right">
@@ -109,6 +114,12 @@ const isAboutActive = path.startsWith('/about');
 </header>
 
 <style>
+  .brand-left-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
   /* ── Mobile Hamburger Button ── */
   .mobile-burger-btn {
     display: none;

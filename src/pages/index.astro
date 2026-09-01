@@ -84,6 +84,28 @@ const remainingPosts = enhancedPosts.slice(1);
 ---
 
 <BaseLayout fullWidth={true}>
+  <!-- Blue Filter Ribbon (Matching Ollasoftware Design) -->
+  <aside class="trust-ribbon-blue" aria-label="Filter blog categories">
+    <div class="trust-scroller mono">
+      {
+        filterCategories.map((cat, idx) => (
+          <>
+            <button
+              class={`blue-filter-btn ${idx === 0 ? 'active' : ''}`}
+              data-filter={cat.id}
+              type="button"
+              aria-label={`Filter by ${cat.label}`}
+            >
+              <span class="lbl">{cat.label}</span>
+              <span class="num">{cat.count}</span>
+            </button>
+            {idx < filterCategories.length - 1 && <span class="trust-dot">·</span>}
+          </>
+        ))
+      }
+    </div>
+  </aside>
+
   <!-- Main 3-Column Content Layout -->
   <div class="blog-main-layout" id="pieces">
     <!-- Left Column: Founder Special & All 21 Pieces (Expandable Inline) -->

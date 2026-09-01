@@ -112,24 +112,19 @@ const categorizedTags = categories.map((cat) => {
         </form>
       </div>
 
-      <!-- Category Filter Ribbon (Blue Pill buttons with dots) -->
-      <aside class="trust-ribbon-blue" aria-label="Category Filters">
-        <div class="trust-scroller mono">
-          <button class="blue-filter-btn cat-tab-btn active" data-cat="all" type="button">
-            <span class="lbl">All Categories</span>
-            <span class="num">{allTags.length}</span>
+      <!-- Category Filter Tabs (Text-Only, No Emojis/Images) -->
+      <nav class="category-tabs-bar" aria-label="Category Filters">
+        <button class="cat-tab-btn active" data-cat="all">
+          All Categories
+          <span class="cat-tab-count mono">{allTags.length}</span>
+        </button>
+        {categorizedTags.map((cat) => (
+          <button class="cat-tab-btn" data-cat={cat.id}>
+            {cat.name}
+            <span class="cat-tab-count mono">{cat.tags.length}</span>
           </button>
-          {categorizedTags.map((cat) => (
-            <>
-              <span class="trust-dot">·</span>
-              <button class="blue-filter-btn cat-tab-btn" data-cat={cat.id} type="button">
-                <span class="lbl">{cat.name}</span>
-                <span class="num">{cat.tags.length}</span>
-              </button>
-            </>
-          ))}
-        </div>
-      </aside>
+        ))}
+      </nav>
     </div>
   </section>
 

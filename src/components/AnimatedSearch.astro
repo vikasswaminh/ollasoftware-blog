@@ -1,0 +1,388 @@
+---
+import { allPosts } from '../lib';
+
+const searchData = allPosts.map(p => ({
+  brand: p.brand,
+  slug: p.slug,
+  tagline: p.brandTagline,
+  category: p.category,
+}));
+
+const dataJson = JSON.stringify(searchData);
+---
+
+<div class="search-wrapper" data-search>
+  <!-- SVG Gooey Filter -->
+  <svg aria-hidden="true" class="goo-filter">
+    <defs>
+      <filter id="goo-effect">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+        <feColorMatrix
+          in="blur"
+          type="matrix"
+          values="1 0 0 0 0
+                  0 1 0 0 0
+                  0 0 1 0 0
+                  0 0 0 18 -15"
+          result="goo"
+        />
+        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="button-content">
+    <div class="button-content-inner">
+      <!-- Search Results -->
+      <div class="search-results" role="listbox" aria-label="Search results"></div>
+
+      <!-- Main Search Button -->
+      <button
+        class="search-btn"
+        type="button"
+        aria-label="Open search"
+        data-search-button
+      >
+        <span class="search-text">Search</span>
+
+        <input
+          class="search-input"
+          type="text"
+          placeholder="Search guides..."
+          aria-label="Search input"
+          autocomplete="off"
+          data-search-input
+        />
+      </button>
+
+      <!-- Search / Loading Icon -->
+      <div
+        class="search-icon-wrapper"
+        aria-hidden="true"
+        data-search-icon
+      >
+        <!-- Search Icon -->
+        <svg
+          class="search-icon"
+          width="15"
+          height="15"
+          viewBox="0 0 15 15"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M10 6.5C10 8.433 8.433 10 6.5 10
+            C4.567 10 3 8.433 3 6.5
+            C3 4.567 4.567 3 6.5 3
+            C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159
+            C8.53901 10.6318 7.56251 11 6.5 11
+            C4.01472 11 2 8.98528 2 6.5
+            C2 4.01472 4.01472 2 6.5 2
+            C8.98528 2 11 4.01472 11 6.5
+            C11 7.56251 10.6318 8.53901 10.0159 9.30884
+            L12.8536 12.1464
+            C13.0488 12.3417 13.0488 12.6583
+            12.8536 12.8536
+            C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536
+            L9.30884 10.0159Z"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            fill="#dddddd"
+          />
+        </svg>
+
+        <!-- Loading Icon -->
+        <svg
+          class="loading-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 256 256"
+          aria-label="Loading"
+          role="status"
+        >
+          <rect width="256" height="256" fill="none" />
+          <line x1="128" y1="32" x2="128" y2="64" />
+          <line x1="195.88" y1="60.12" x2="173.25" y2="82.75" />
+          <line x1="224" y1="128" x2="192" y2="128" />
+          <line x1="195.88" y1="195.88" x2="173.25" y2="173.25" />
+          <line x1="128" y1="224" x2="128" y2="192" />
+          <line x1="60.12" y1="195.88" x2="82.75" y2="173.25" />
+          <line x1="32" y1="128" x2="64" y2="128" />
+          <line x1="60.12" y1="60.12" x2="82.75" y2="82.75" />
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .search-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 12px;
+    height: 40px;
+    z-index: 100;
+  }
+
+  .goo-filter {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .button-content {
+    position: relative;
+  }
+
+  .button-content-inner {
+    position: relative;
+    max-width: max-content;
+    filter: url("#goo-effect");
+  }
+
+  .search-btn {
+    position: relative;
+    z-index: 2;
+    width: 86px;
+    height: 36px;
+    border: 0;
+    outline: none;
+    border-radius: 999px;
+    background: #0f172a;
+    color: rgba(221, 221, 221, 0.85);
+    cursor: pointer;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.2s ease;
+  }
+
+  .search-wrapper.active .search-btn {
+    width: 200px;
+    transform: translateX(0);
+  }
+
+  .search-text {
+    pointer-events: none;
+    position: relative;
+    left: 2px;
+  }
+
+  .search-input {
+    display: none;
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #ddd;
+    font: inherit;
+    font-size: 13px;
+  }
+
+  .search-input::placeholder {
+    color: rgba(221, 221, 221, 0.55);
+  }
+
+  .search-wrapper.active .search-text {
+    display: none;
+  }
+
+  .search-wrapper.active .search-input {
+    display: block;
+  }
+
+  .search-icon-wrapper {
+    position: absolute;
+    right: -4px;
+    top: -1px;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #0f172a;
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+  }
+
+  .search-wrapper.active .search-icon-wrapper {
+    opacity: 1;
+    transform: translateX(14px);
+  }
+
+  .loading-icon {
+    display: none;
+    width: 18px;
+    height: 18px;
+    animation: rotate 0.5s linear infinite;
+  }
+
+  .loading-icon line {
+    fill: none;
+    stroke: #ddd;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 16;
+  }
+
+  .search-wrapper.loading .search-icon { display: none; }
+  .search-wrapper.loading .loading-icon { display: block; }
+
+  .search-results {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    width: 260px;
+    z-index: 999;
+  }
+
+  .search-result {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: 20px;
+    background: #0f172a;
+    color: #ddd;
+    font-size: 13px;
+    opacity: 0;
+    transform: translateY(0) scale(0.3);
+    animation: result-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    text-decoration: none;
+    display: block;
+    box-sizing: border-box;
+  }
+
+  .search-result:hover {
+    background: #1e293b;
+    color: #ffffff;
+  }
+
+  .search-result-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .info-icon {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
+  .info-icon path { fill: #2563eb; }
+
+  @keyframes result-in {
+    from {
+      opacity: 0;
+      transform: translateY(0) scale(0.3);
+      filter: blur(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(var(--result-y)) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes rotate {
+    to { transform: rotate(180deg); }
+  }
+
+  @media (max-width: 768px) {
+    .search-wrapper {
+      margin-left: 6px;
+    }
+    .search-btn {
+      width: 76px;
+      padding: 5px 10px;
+    }
+    .search-wrapper.active .search-btn {
+      width: 140px;
+    }
+  }
+</style>
+
+<script define:vars={{ dataJson }}>
+  const searchData = JSON.parse(dataJson);
+  const wrapper = document.querySelector("[data-search]");
+  const button = document.querySelector("[data-search-button]");
+  const input = document.querySelector("[data-search-input]");
+  const results = document.querySelector(".search-results");
+
+  if (wrapper && button && input && results) {
+    let debounceTimer;
+
+    button.addEventListener("click", () => {
+      if (!wrapper.classList.contains("active")) {
+        wrapper.classList.add("active");
+        requestAnimationFrame(() => { input.focus(); });
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!wrapper.contains(e.target)) {
+        wrapper.classList.remove("active");
+        wrapper.classList.remove("loading");
+        results.innerHTML = "";
+        input.value = "";
+      }
+    });
+
+    input.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      wrapper.classList.remove("loading");
+
+      debounceTimer = window.setTimeout(() => {
+        const query = input.value.trim().toLowerCase();
+        if (!query) {
+          results.innerHTML = "";
+          return;
+        }
+
+        wrapper.classList.add("loading");
+
+        window.setTimeout(() => {
+          const filtered = searchData.filter((item) =>
+            item.brand.toLowerCase().includes(query) ||
+            item.tagline.toLowerCase().includes(query) ||
+            item.category.toLowerCase().includes(query)
+          ).slice(0, 5);
+
+          results.innerHTML = "";
+
+          filtered.forEach((item, index) => {
+            const link = document.createElement("a");
+            link.href = `/blog/${item.slug}/`;
+            link.className = "search-result";
+            link.setAttribute("role", "option");
+            link.style.setProperty("--result-y", `${(index + 1) * 44}px`);
+            link.style.animationDelay = `${index * 0.08}s`;
+
+            link.innerHTML = `
+              <div class="search-result-title">
+                <svg class="info-icon" viewBox="0 0 20.2832 19.9316" fill="none" aria-hidden="true">
+                  <path d="M7.49991 0.876892C3.84222 0.876892 0.877075 3.84204 0.877075 7.49972C0.877075 11.1574 3.84222 14.1226 7.49991 14.1226C11.1576 14.1226 14.1227 11.1574 14.1227 7.49972C14.1227 3.84204 11.1576 0.876892 7.49991 0.876892Z" fill="#2563eb"/>
+                </svg>
+                <span><strong>${item.brand}</strong> — ${item.tagline.slice(0, 22)}...</span>
+              </div>
+            `;
+
+            results.appendChild(link);
+          });
+
+          wrapper.classList.remove("loading");
+        }, 300);
+      }, 300);
+    });
+  }
+</script>
