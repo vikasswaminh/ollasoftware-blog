@@ -5,7 +5,7 @@ const isTagsActive = path.startsWith('/tags');
 const isAboutActive = path.startsWith('/about');
 ---
 
-<header class="site-header">
+<header class="site-header" id="site-header">
   <div class="container header-inner">
     <!-- Left: Brand Logo Image + ollasoftware (blue) + blog (blue) -->
     <a class="brand" href="/" aria-label="OllaSoftware Blog Home">
@@ -15,15 +15,16 @@ const isAboutActive = path.startsWith('/about');
       </span>
     </a>
 
-    <!-- Right: Nav Links + CTA Button -->
+    <!-- Right: Desktop Nav Links + CTA Button -->
     <div class="nav-right">
-      <nav class="nav-links" aria-label="Primary">
+      <nav class="nav-links desktop-nav" aria-label="Primary">
         <a href="/" class:list={['nav-link', { active: isBlogActive }]}>Blog</a>
         <a href="/tags/" class:list={['nav-link', { active: isTagsActive }]}>Tags</a>
         <a href="/about/" class:list={['nav-link', { active: isAboutActive }]}>About</a>
       </nav>
+
       <a
-        class="nav-cta-btn"
+        class="nav-cta-btn desktop-cta"
         href="https://ollasoftware.com"
         target="_blank"
         rel="noopener noreferrer"
@@ -44,6 +45,307 @@ const isAboutActive = path.startsWith('/about');
           />
         </svg>
       </a>
+
+      <!-- Mobile Hamburger Button (Shows on <= 768px screens) -->
+      <button
+        type="button"
+        id="mobile-menu-btn"
+        class="mobile-burger-btn"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+      >
+        <span class="burger-bar"></span>
+        <span class="burger-bar"></span>
+        <span class="burger-bar"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Drawer Overlay -->
+  <div id="mobile-drawer" class="mobile-drawer" aria-hidden="true">
+    <div class="mobile-drawer-inner">
+      <div class="mobile-drawer-header">
+        <a class="brand" href="/" aria-label="OllaSoftware Blog Home">
+          <img src="/logo.png" alt="OllaSoftware Logo" class="brand-logo-img" />
+          <span class="brand-text-wrapper">
+            <span class="brand-name">ollasoftware</span><span class="brand-blog-text">blog</span>
+          </span>
+        </a>
+        <button type="button" id="mobile-close-btn" class="mobile-close-btn" aria-label="Close menu">
+          ✕
+        </button>
+      </div>
+
+      <nav class="mobile-nav-list" aria-label="Mobile Primary">
+        <a href="/" class:list={['mobile-nav-link', { active: isBlogActive }]}>
+          <span>Blog</span>
+          <span class="nav-arrow">→</span>
+        </a>
+        <a href="/tags/" class:list={['mobile-nav-link', { active: isTagsActive }]}>
+          <span>Tags</span>
+          <span class="nav-arrow">→</span>
+        </a>
+        <a href="/about/" class:list={['mobile-nav-link', { active: isAboutActive }]}>
+          <span>About</span>
+          <span class="nav-arrow">→</span>
+        </a>
+
+        <div class="mobile-cta-wrap">
+          <a
+            class="mobile-nav-cta"
+            href="https://ollasoftware.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>ollasoftware.com</span>
+            <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true">
+              <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/>
+            </svg>
+          </a>
+        </div>
+      </nav>
     </div>
   </div>
 </header>
+
+<style>
+  /* ── Mobile Hamburger Button ── */
+  .mobile-burger-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4.5px;
+    width: 38px;
+    height: 38px;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .mobile-burger-btn:hover {
+    background: #eff6ff;
+    border-color: #2563eb;
+  }
+
+  .burger-bar {
+    width: 18px;
+    height: 2px;
+    background: #0f172a;
+    border-radius: 2px;
+    transition: transform 0.25s ease, opacity 0.2s ease;
+  }
+
+  .mobile-burger-btn.is-open .burger-bar:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  .mobile-burger-btn.is-open .burger-bar:nth-child(2) {
+    opacity: 0;
+  }
+  .mobile-burger-btn.is-open .burger-bar:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  /* ── Fullscreen Mobile Drawer ── */
+  .mobile-drawer {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .mobile-drawer.is-open {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-drawer-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    padding: 1rem 1.25rem 2rem;
+    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.15);
+    border-bottom: 2px solid #e2e8f0;
+    transform: translateY(-100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mobile-drawer.is-open .mobile-drawer-inner {
+    transform: translateY(0);
+  }
+
+  .mobile-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 1.25rem;
+  }
+
+  .mobile-close-btn {
+    width: 36px;
+    height: 36px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    color: #475467;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+
+  .mobile-close-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+
+  .mobile-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .mobile-nav-link {
+    font-family: var(--font, 'Lato', sans-serif);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+    text-decoration: none;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    transition: all 0.15s ease;
+  }
+
+  .mobile-nav-link.active,
+  .mobile-nav-link:hover {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #bfdbfe;
+  }
+
+  .nav-arrow {
+    color: #94a3b8;
+    font-size: 1rem;
+    transition: transform 0.15s ease;
+  }
+
+  .mobile-nav-link:hover .nav-arrow {
+    transform: translateX(4px);
+    color: #2563eb;
+  }
+
+  .mobile-cta-wrap {
+    margin-top: 1rem;
+  }
+
+  .mobile-nav-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    background: #2563eb;
+    color: #ffffff !important;
+    font-family: var(--font, 'Lato', sans-serif);
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 0.85rem;
+    border-radius: 100px;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+    box-sizing: border-box;
+  }
+
+  /* ── Responsive Display Rules ── */
+  @media (max-width: 768px) {
+    .desktop-nav,
+    .desktop-cta {
+      display: none !important;
+    }
+
+    .mobile-burger-btn {
+      display: flex !important;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    function initMobileHeader() {
+      var btn = document.getElementById('mobile-menu-btn');
+      var closeBtn = document.getElementById('mobile-close-btn');
+      var drawer = document.getElementById('mobile-drawer');
+      if (!btn || !drawer) return;
+
+      function openMenu() {
+        drawer.classList.add('is-open');
+        btn.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMenu() {
+        drawer.classList.remove('is-open');
+        btn.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (drawer.classList.contains('is-open')) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      });
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          closeMenu();
+        });
+      }
+
+      drawer.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!drawer.classList.contains('is-open')) return;
+        var header = document.getElementById('site-header');
+        if (header && !header.contains(e.target)) {
+          closeMenu();
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initMobileHeader);
+    } else {
+      initMobileHeader();
+    }
+  })();
+</script>
