@@ -108,7 +108,7 @@ main.container {
 }
 
 .brand-logo-img {
-  height: 56px;
+  height: 68px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -124,7 +124,7 @@ main.container {
 
 .brand-name {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-size: 1.75rem;
+  font-size: 1.95rem;
   font-weight: 900;
   letter-spacing: -0.04em;
   color: #1D6AF3;
@@ -133,7 +133,7 @@ main.container {
 
 .brand-blog-text {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-size: 1.75rem;
+  font-size: 1.95rem;
   font-weight: 900;
   letter-spacing: -0.03em;
   color: #1D6AF3;
