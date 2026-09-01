@@ -3,443 +3,682 @@ import Layout from '../../layouts/Layout.astro';
 import { getAllTags, allPosts } from '../../lib';
 
 const allTags = getAllTags();
+
+// Category definitions with rich metadata, icons, taglines, and tag mapping rules
+const categories = [
+  {
+    id: 'ai',
+    name: 'AI & Intelligent Agents',
+    icon: '🤖',
+    tagline: 'AEO, LLM Observability, RAG, Web Memory & Agentic Runtimes',
+    color: { bg: '#f0fdf4', border: '#bbf7d0', text: '#16a34a', accent: '#22c55e' },
+    keywords: ['ai', 'aeo', 'agent', 'llm', 'rag', 'web-memory', 'crawling', 'graph', 'vector', 'multi-model', 'production-ai', 'enterprise-ai', 'answer-engine', 'seo', 'privacy'],
+  },
+  {
+    id: 'security',
+    name: 'Security & Networking',
+    icon: '🛡️',
+    tagline: 'Zero Trust, SD-WAN, Mesh VPN, WireGuard & Quantum Security',
+    color: { bg: '#faf5ff', border: '#e9d5ff', text: '#7c3aed', accent: '#8b5cf6' },
+    keywords: ['security', 'zero-trust', 'ztna', 'sd-wan', 'vpn', 'wireguard', 'encryption', 'phishing', 'dns', 'quantum', 'network-security', 'secure-access', 'remote-access'],
+  },
+  {
+    id: 'api',
+    name: 'APIs & Infrastructure',
+    icon: '⚡',
+    tagline: 'Localhost Tunnels, MCP Native, Realtime Data Sync & Edge Compute',
+    color: { bg: '#eff6ff', border: '#bfdbfe', text: '#2563eb', accent: '#3b82f6' },
+    keywords: ['api', 'tunnel', 'mcp', 'sync', 'edge', 'infra', 'media', 'cdn', 'reliability', 'cross-platform', 'data-sync', 'localhost-tunnel', 'secure-tunneling'],
+  },
+  {
+    id: 'saas',
+    name: 'SaaS & Developer Tools',
+    icon: '🚀',
+    tagline: 'Resume Builders, SaaS Infrastructure & Indian Developer Ecosystems',
+    color: { bg: '#fff7ed', border: '#fed7aa', text: '#ea580c', accent: '#f97316' },
+    keywords: ['saas', 'resume', 'free-tool', 'cv', 'career', 'indian-developers', 'rupee', 'developer-tools', 'career-tools', 'distributed-teams'],
+  },
+  {
+    id: 'education',
+    name: 'Education & Certifications',
+    icon: '🎓',
+    tagline: 'Cisco Training, CCNA/CCIE Bootcamps & Enterprise Networking Education',
+    color: { bg: '#f0fdfa', border: '#99f6e4', text: '#0d9488', accent: '#14b8a6' },
+    keywords: ['education', 'cisco', 'ccna', 'ccie', 'networking-training', 'certification', 'exam', 'bangalore', 'exam-prep', 'networkershome'],
+  },
+];
+
+function getCategoryForTag(tag: string): string {
+  const t = tag.toLowerCase();
+  for (const cat of categories) {
+    if (cat.keywords.some(kw => t.includes(kw))) {
+      return cat.id;
+    }
+  }
+  return 'ai';
+}
+
+const categorizedTags = categories.map((cat) => {
+  const tagsInCat = allTags.filter((t) => getCategoryForTag(t.tag) === cat.id);
+  const totalPosts = tagsInCat.reduce((acc, curr) => acc + curr.count, 0);
+  return {
+    ...cat,
+    tags: tagsInCat,
+    totalPosts,
+  };
+});
 ---
 
-<Layout title="Tags — OllaSoftware Blog" description={`Browse all ${allTags.length} topics across ${allPosts.length} brand deep-dives.`}>
-  <div class="tags-page-wrap">
+<Layout
+  title="Tags & Category — OllaSoftware Blog"
+  description={`Explore all ${allTags.length} topics across 5 categories and ${allPosts.length} brand deep-dives.`}
+>
+  <div class="tags-hub-page">
 
-    <!-- Left Sidebar -->
-    <aside class="tags-sidebar">
-      <div class="sidebar-card">
-        <div class="sidebar-header">
-          <span class="sidebar-title">All Tags</span>
-          <span class="sidebar-count mono" id="sidebar-count">{allTags.length}</span>
-        </div>
-        <div class="sidebar-search-box">
-          <svg class="sidebar-search-icon" viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true">
+    <!-- Centered Header Section -->
+    <header class="tags-header-centered">
+      <div class="header-inner">
+        <div class="eyebrow-pill mono">PRO TOPIC TAXONOMY</div>
+        <h1 class="centered-h1">Tags & Category</h1>
+        <p class="centered-sub mono">
+          Explore {allTags.length} topics categorized into 5 technology pillars across {allPosts.length} brand deep-dives. Select any category or tag below to filter articles instantly.
+        </p>
+
+        <!-- Centered Main Search Bar -->
+        <div class="search-box-centered">
+          <svg class="search-svg" viewBox="0 0 20 20" fill="currentColor" width="18" height="18" aria-hidden="true">
             <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"/>
           </svg>
           <input
             type="text"
-            id="sidebar-tag-search"
-            class="sidebar-search-input mono"
-            placeholder="Search tags..."
-            aria-label="Search tags"
+            id="hub-search-input"
+            class="search-input mono"
+            placeholder="Search topics (e.g. #zero-trust, #ai-agents, #cisco, #mcp)..."
+            aria-label="Search topics"
           />
         </div>
-        <nav class="sidebar-tags-list" id="sidebar-tags-list">
-          {allTags.map(({ tag, count }) => (
-            <a href={`/tags/${tag}/`} class="sidebar-tag-row" data-tag={tag.toLowerCase()}>
-              <span class="sidebar-tag-name">#{tag}</span>
-              <span class="sidebar-tag-num mono">{count}</span>
-            </a>
+
+        <!-- Category Filter Tabs -->
+        <nav class="category-tabs-bar" aria-label="Category Filters">
+          <button class="cat-tab-btn active" data-cat="all">
+            <span class="cat-tab-icon">🌐</span> All Categories
+            <span class="cat-tab-count mono">{allTags.length}</span>
+          </button>
+          {categorizedTags.map((cat) => (
+            <button class="cat-tab-btn" data-cat={cat.id}>
+              <span class="cat-tab-icon">{cat.icon}</span> {cat.name}
+              <span class="cat-tab-count mono">{cat.tags.length}</span>
+            </button>
           ))}
         </nav>
       </div>
-    </aside>
+    </header>
 
-    <!-- Right: Welcome / Search & Grid -->
-    <main class="tags-main">
-      <div class="tags-hero">
-        <p class="tags-eyebrow mono">BROWSE BY TOPIC</p>
-        <h1 class="tags-h1">All Tags</h1>
-        <p class="tags-sub">
-          {allTags.length} topics across {allPosts.length} brand deep-dives —
-          every tag is real, derived directly from post content.
-        </p>
+    <!-- Main Categorized Content Hub -->
+    <main class="hub-container">
 
-        <!-- Main Search Bar -->
-        <div class="tags-search-wrap">
-          <div class="tags-search-input-box">
-            <svg class="tags-search-svg" viewBox="0 0 20 20" fill="currentColor" width="18" height="18" aria-hidden="true">
-              <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"/>
-            </svg>
-            <input
-              type="text"
-              id="main-tag-search"
-              class="tags-main-input mono"
-              placeholder="Search topics (e.g. ai-agents, zero-trust, api, network-security)..."
-              aria-label="Search topics"
-            />
-          </div>
-        </div>
+      <!-- Dynamic Search No Results State -->
+      <div id="no-results-box" class="no-results-box" style="display: none;">
+        <div class="no-results-icon">🔍</div>
+        <h3>No matching topics found</h3>
+        <p>Try searching for keywords like <code>#zero-trust</code>, <code>#aeo</code>, <code>#api</code>, or <code>#cisco</code>.</p>
       </div>
 
-      <!-- No results message -->
-      <div id="no-tags-found" class="no-tags-found" style="display: none;">
-        <p>No topics found matching your search.</p>
-      </div>
+      <!-- Categorized Sections -->
+      <div class="categories-list" id="categories-list">
+        {categorizedTags.map((cat) => (
+          <section class="category-card-block" data-cat-block={cat.id}>
+            <div class="category-card-header" style={`background: ${cat.color.bg}; border-color: ${cat.color.border}`}>
+              <div class="cat-header-left">
+                <span class="cat-large-icon">{cat.icon}</span>
+                <div>
+                  <h2 class="cat-title" style={`color: ${cat.color.text}`}>{cat.name}</h2>
+                  <p class="cat-tagline mono">{cat.tagline}</p>
+                </div>
+              </div>
+              <div class="cat-header-right">
+                <span class="cat-badge mono" style={`background: ${cat.color.border}; color: ${cat.color.text}`}>
+                  {cat.tags.length} topics · {cat.totalPosts} posts
+                </span>
+              </div>
+            </div>
 
-      <!-- Tag cards grid -->
-      <div class="tags-grid" id="tags-grid">
-        {allTags.map(({ tag, count }) => (
-          <a class="tag-card" href={`/tags/${tag}/`} data-tag={tag.toLowerCase()}>
-            <span class="tag-card-hash">#</span>
-            <span class="tag-card-name">{tag}</span>
-            <span class="tag-card-count mono">{count} post{count !== 1 ? 's' : ''}</span>
-          </a>
+            <!-- Tags Grid within Category -->
+            <div class="category-tags-grid">
+              {cat.tags.map(({ tag, count }) => (
+                <a
+                  href={`/tags/${tag}/`}
+                  class="tag-pill-item"
+                  data-tag-name={tag.toLowerCase()}
+                  title={`View articles tagged #${tag}`}
+                >
+                  <span class="tag-hash" style={`color: ${cat.color.text}`}>#</span>
+                  <span class="tag-label">{tag}</span>
+                  <span class="tag-count-badge mono">{count}</span>
+                </a>
+              ))}
+            </div>
+          </section>
         ))}
       </div>
+
+      <!-- Quick Index of All Tags -->
+      <section class="all-tags-section" id="all-tags-section">
+        <div class="all-tags-header">
+          <span class="section-badge mono">COMPLETE DIRECTORY</span>
+          <h2>All Topics Index ({allTags.length})</h2>
+          <p class="mono">Alphabetical and count-sorted view of all tags</p>
+        </div>
+        <div class="all-tags-grid" id="all-tags-grid">
+          {allTags.map(({ tag, count }) => (
+            <a href={`/tags/${tag}/`} class="all-tag-card" data-tag-card={tag.toLowerCase()}>
+              <span class="all-tag-hash">#</span>
+              <span class="all-tag-name">{tag}</span>
+              <span class="all-tag-num mono">{count}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
     </main>
   </div>
 </Layout>
 
 <style>
-  /* ── Page shell ── */
-  .tags-page-wrap {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 2rem;
-    max-width: 1100px;
+  /* ── Page Shell ── */
+  .tags-hub-page {
+    background: var(--o-bg, #ffffff);
+    min-height: 100vh;
+    padding-bottom: 96px;
+  }
+
+  /* ── Centered Header ── */
+  .tags-header-centered {
+    padding: 64px 24px 48px;
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.04) 0%, rgba(255, 255, 255, 0) 100%);
+    border-bottom: 1px solid #e2e8f0;
+    text-align: center;
+  }
+
+  .header-inner {
+    max-width: 900px;
     margin: 0 auto;
-    padding: 2.5rem 1.5rem 5rem;
-    align-items: start;
-  }
-
-  @media (max-width: 768px) {
-    .tags-page-wrap {
-      grid-template-columns: 1fr;
-      padding: 1.5rem 1rem 4rem;
-      gap: 1.5rem;
-    }
-    .tags-sidebar {
-      display: none;
-    }
-    .tags-h1 {
-      font-size: 1.85rem;
-    }
-    .tags-grid {
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 0.65rem;
-    }
-  }
-
-  /* ── Left Sidebar ── */
-  .tags-sidebar {
-    position: sticky;
-    top: 5rem;
-  }
-
-  .sidebar-card {
-    background: #fff;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
-  }
-
-  .sidebar-header {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.1rem 0.75rem;
-    border-bottom: 1px solid #f1f5f9;
-    background: #fafbfd;
   }
 
-  .sidebar-title {
-    font-size: 0.82rem;
+  .eyebrow-pill {
+    background: rgba(37, 99, 235, 0.08);
+    color: #2563eb;
+    border: 1px solid rgba(37, 99, 235, 0.25);
+    padding: 4px 14px;
+    border-radius: 6px;
+    font-size: 11px;
     font-weight: 800;
-    letter-spacing: 0.06em;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    color: #334155;
+    margin-bottom: 16px;
   }
 
-  .sidebar-count {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #fff;
-    background: #2563eb;
-    padding: 0.1rem 0.5rem;
-    border-radius: 999px;
+  .centered-h1 {
+    font-size: clamp(32px, 4.5vw, 52px);
+    font-weight: 900;
+    letter-spacing: -1.2px;
+    color: #0f172a;
+    margin: 0 0 14px;
+    line-height: 1.1;
   }
 
-  .sidebar-search-box {
+  .centered-sub {
+    font-size: clamp(14px, 1.2vw, 16px);
+    color: #64748b;
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 0 28px;
+  }
+
+  /* ── Search Bar ── */
+  .search-box-centered {
+    width: 100%;
+    max-width: 640px;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.55rem 0.9rem;
-    border-bottom: 1px solid #f1f5f9;
+    gap: 12px;
     background: #ffffff;
-    transition: background 0.15s ease;
+    border: 2px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 12px 18px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-bottom: 32px;
   }
 
-  .sidebar-search-box:focus-within {
-    background: #eff6ff;
+  .search-box-centered:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
   }
 
-  .sidebar-search-icon {
-    color: #94a3b8;
+  .search-svg {
+    color: #64748b;
     flex-shrink: 0;
-    transition: color 0.15s ease;
   }
 
-  .sidebar-search-box:focus-within .sidebar-search-icon {
+  .search-box-centered:focus-within .search-svg {
     color: #2563eb;
   }
 
-  .sidebar-search-input {
+  .search-input {
     width: 100%;
     border: none;
     outline: none;
-    font-size: 0.8rem;
+    font-size: 15px;
     color: #0f172a;
     background: transparent;
   }
 
-  .sidebar-search-input::placeholder {
+  .search-input::placeholder {
     color: #94a3b8;
   }
 
-  .sidebar-tags-list {
+  /* ── Category Filter Tabs ── */
+  .category-tabs-bar {
     display: flex;
-    flex-direction: column;
-    max-height: 70vh;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #e2e8f0 transparent;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    max-width: 900px;
   }
 
-  .sidebar-tag-row {
+  .cat-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1.5px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  }
+
+  .cat-tab-btn:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+    background: #eff6ff;
+    transform: translateY(-1px);
+  }
+
+  .cat-tab-btn.active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  }
+
+  .cat-tab-icon {
+    font-size: 14px;
+  }
+
+  .cat-tab-count {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #475467;
+  }
+
+  .cat-tab-btn.active .cat-tab-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+  }
+
+  /* ── Hub Main Container ── */
+  .hub-container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 48px 24px 0;
+  }
+
+  .no-results-box {
+    text-align: center;
+    padding: 48px 24px;
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 16px;
+    color: #475467;
+    margin-bottom: 48px;
+  }
+
+  .no-results-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+
+  .no-results-box h3 {
+    margin: 0 0 8px;
+    color: #0f172a;
+    font-size: 20px;
+  }
+
+  .no-results-box code {
+    background: #e2e8f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #1e293b;
+  }
+
+  /* ── Categorized Sections List ── */
+  .categories-list {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin-bottom: 64px;
+  }
+
+  .category-card-block {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+    transition: all 0.2s ease;
+  }
+
+  .category-card-block:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+  }
+
+  .category-card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.6rem 1.1rem;
-    text-decoration: none;
-    color: #475467;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border-bottom: 1px solid #f8fafc;
-    transition: all 0.12s ease;
-    gap: 0.5rem;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    flex-wrap: wrap;
+    gap: 16px;
   }
 
-  .sidebar-tag-row:last-child { border-bottom: none; }
-
-  .sidebar-tag-row:hover {
-    background: #eff6ff;
-    color: #1d4ed8;
-  }
-
-  .sidebar-tag-name {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .sidebar-tag-num {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: #2563eb;
-    background: #dbeafe;
-    padding: 0.1rem 0.45rem;
-    border-radius: 999px;
-    flex-shrink: 0;
-  }
-
-  /* ── Right: Hero + Grid ── */
-  .tags-main { min-width: 0; }
-
-  .tags-hero {
-    margin-bottom: 2rem;
-  }
-
-  .tags-eyebrow {
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    color: #2563eb;
-    text-transform: uppercase;
-    margin: 0 0 0.6rem;
-    display: block;
-  }
-
-  .tags-h1 {
-    font-size: 2.2rem;
-    font-weight: 900;
-    color: #0f172a;
-    letter-spacing: -0.03em;
-    margin: 0 0 0.6rem;
-  }
-
-  .tags-sub {
-    color: #64748b;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin: 0 0 1.5rem;
-  }
-
-  /* ── Main Search Bar ── */
-  .tags-search-wrap {
-    margin-top: 1rem;
-  }
-
-  .tags-search-input-box {
+  .cat-header-left {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 14px;
+  }
+
+  .cat-large-icon {
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .cat-title {
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+  }
+
+  .cat-tagline {
+    margin: 0;
+    font-size: 12px;
+    color: #475467;
+  }
+
+  .cat-badge {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 5px 12px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .category-tags-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    padding: 24px;
+  }
+
+  .tag-pill-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #1e293b;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .tag-pill-item:hover {
     background: #ffffff;
-    border: 1.5px solid #cbd5e1;
-    border-radius: 12px;
-    padding: 0.75rem 1.1rem;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    border-color: #2563eb;
+    color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+  }
+
+  .tag-hash {
+    font-weight: 900;
+    font-size: 14px;
+  }
+
+  .tag-label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tag-count-badge {
+    font-size: 10.5px;
+    font-weight: 800;
+    color: #475467;
+    background: #e2e8f0;
+    padding: 2px 7px;
+    border-radius: 999px;
+  }
+
+  .tag-pill-item:hover .tag-count-badge {
+    background: #2563eb;
+    color: #ffffff;
+  }
+
+  /* ── All Tags Directory Section ── */
+  .all-tags-section {
+    border-top: 2px dashed #e2e8f0;
+    padding-top: 48px;
+  }
+
+  .all-tags-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .section-badge {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 3px 10px;
+    border-radius: 5px;
+    text-transform: uppercase;
+  }
+
+  .all-tags-header h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 10px 0 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .all-tags-header p {
+    color: #64748b;
+    font-size: 13px;
+    margin: 0;
+  }
+
+  .all-tags-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 10px;
+  }
+
+  .all-tag-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #334155;
+    font-size: 12.5px;
+    font-weight: 700;
     transition: all 0.15s ease;
   }
 
-  .tags-search-input-box:focus-within {
+  .all-tag-card:hover {
     border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-  }
-
-  .tags-search-svg {
-    color: #64748b;
-    flex-shrink: 0;
-  }
-
-  .tags-search-input-box:focus-within .tags-search-svg {
     color: #2563eb;
-  }
-
-  .tags-main-input {
-    width: 100%;
-    border: none;
-    outline: none;
-    font-size: 0.92rem;
-    color: #0f172a;
-    background: transparent;
-  }
-
-  .tags-main-input::placeholder {
-    color: #94a3b8;
-  }
-
-  .no-tags-found {
-    text-align: center;
-    padding: 2.5rem;
-    background: #f8fafc;
-    border: 1.5px dashed #e2e8f0;
-    border-radius: 12px;
-    color: #64748b;
-    font-size: 0.95rem;
-  }
-
-  /* ── Tag cards grid ── */
-  .tags-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-    gap: 0.85rem;
-  }
-
-  .tag-card {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: #fff;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    text-decoration: none;
-    color: #0f172a;
-    transition: all 0.16s ease;
-    box-shadow: 0 1px 6px rgba(15, 23, 42, 0.03);
-  }
-
-  .tag-card:hover {
-    border-color: #2563eb;
     background: #eff6ff;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.1);
+    transform: translateY(-1px);
   }
 
-  .tag-card-hash {
-    font-size: 1rem;
-    font-weight: 900;
+  .all-tag-hash {
     color: #2563eb;
-    flex-shrink: 0;
+    font-weight: 900;
   }
 
-  .tag-card-name {
+  .all-tag-name {
     flex: 1;
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: #0f172a;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
-  .tag-card:hover .tag-card-name { color: #1d4ed8; }
-
-  .tag-card-count {
-    font-size: 0.72rem;
-    font-weight: 700;
+  .all-tag-num {
+    font-size: 10px;
+    font-weight: 800;
     color: #2563eb;
     background: #dbeafe;
-    padding: 0.12rem 0.45rem;
+    padding: 1px 6px;
     border-radius: 999px;
-    flex-shrink: 0;
   }
 
-  .mono { font-family: 'Courier New', Courier, monospace; }
+  .mono {
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  @media (max-width: 768px) {
+    .tags-header-centered {
+      padding: 40px 16px 32px;
+    }
+    .centered-h1 {
+      font-size: 32px;
+    }
+    .category-tabs-bar {
+      gap: 6px;
+    }
+    .cat-tab-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .category-tags-grid {
+      grid-template-columns: 1fr;
+      padding: 16px;
+    }
+    .all-tags-grid {
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    }
+  }
 </style>
 
 <script is:inline>
   document.addEventListener('DOMContentLoaded', function() {
-    var sidebarInput = document.getElementById('sidebar-tag-search');
-    var mainInput = document.getElementById('main-tag-search');
-    var sidebarRows = document.querySelectorAll('#sidebar-tags-list .sidebar-tag-row');
-    var gridCards = document.querySelectorAll('#tags-grid .tag-card');
-    var countBadge = document.getElementById('sidebar-count');
-    var noTagsBox = document.getElementById('no-tags-found');
+    var searchInput = document.getElementById('hub-search-input');
+    var catTabs = document.querySelectorAll('.cat-tab-btn');
+    var catBlocks = document.querySelectorAll('.category-card-block');
+    var tagPills = document.querySelectorAll('.tag-pill-item');
+    var allTagCards = document.querySelectorAll('.all-tag-card');
+    var noResults = document.getElementById('no-results-box');
 
-    function filterTags(query, source) {
-      query = (query || '').trim().toLowerCase().replace(/^#/, '');
-      var visibleCount = 0;
+    var activeCat = 'all';
 
-      // Filter sidebar rows
-      sidebarRows.forEach(function(row) {
-        var tag = row.getAttribute('data-tag') || '';
-        if (!query || tag.includes(query)) {
-          row.style.display = 'flex';
-          visibleCount++;
+    function filterHub() {
+      var query = (searchInput ? searchInput.value : '').trim().toLowerCase().replace(/^#/, '');
+      var totalVisibleTags = 0;
+
+      catBlocks.forEach(function(block) {
+        var catId = block.getAttribute('data-cat-block');
+        var isCatMatch = activeCat === 'all' || activeCat === catId;
+
+        var blockTagPills = block.querySelectorAll('.tag-pill-item');
+        var visibleInBlock = 0;
+
+        blockTagPills.forEach(function(pill) {
+          var tagName = pill.getAttribute('data-tag-name') || '';
+          var isTagMatch = !query || tagName.includes(query);
+
+          if (isCatMatch && isTagMatch) {
+            pill.style.display = 'flex';
+            visibleInBlock++;
+            totalVisibleTags++;
+          } else {
+            pill.style.display = 'none';
+          }
+        });
+
+        if (isCatMatch && visibleInBlock > 0) {
+          block.style.display = 'block';
         } else {
-          row.style.display = 'none';
+          block.style.display = 'none';
         }
       });
 
-      // Filter grid cards
-      var gridMatches = 0;
-      gridCards.forEach(function(card) {
-        var tag = card.getAttribute('data-tag') || '';
-        if (!query || tag.includes(query)) {
+      // Filter all tags index grid
+      allTagCards.forEach(function(card) {
+        var tagName = card.getAttribute('data-tag-card') || '';
+        if (!query || tagName.includes(query)) {
           card.style.display = 'flex';
-          gridMatches++;
         } else {
           card.style.display = 'none';
         }
       });
 
-      if (countBadge) countBadge.textContent = visibleCount;
-      if (noTagsBox) noTagsBox.style.display = gridMatches === 0 ? 'block' : 'none';
-
-      // Keep inputs in sync
-      if (source === 'sidebar' && mainInput && mainInput.value !== query) {
-        mainInput.value = query;
-      } else if (source === 'main' && sidebarInput && sidebarInput.value !== query) {
-        sidebarInput.value = query;
+      if (noResults) {
+        noResults.style.display = totalVisibleTags === 0 ? 'block' : 'none';
       }
     }
 
-    if (sidebarInput) {
-      sidebarInput.addEventListener('input', function() {
-        filterTags(this.value, 'sidebar');
+    // Category Tabs click handler
+    catTabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        catTabs.forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+        activeCat = this.getAttribute('data-cat') || 'all';
+        filterHub();
       });
-    }
+    });
 
-    if (mainInput) {
-      mainInput.addEventListener('input', function() {
-        filterTags(this.value, 'main');
+    // Search Input listener
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        filterHub();
       });
     }
   });
