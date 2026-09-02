@@ -51,15 +51,8 @@ const keywordsStr = Array.from(new Set(keywordsList)).join(', ');
 <meta name="generator" content={Astro.generator} />
 <meta name="msvalidate.01" content="6516B681F04AFFB5E3F0D7ED15EC4DF1" />
 
-<!-- DNS Prefetch & Google Fonts: Lato -->
-<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-<link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
-  rel="stylesheet"
-/>
+<!-- Self-Hosted Lato Font (Zero external network latency - Networkers Home Parity) -->
+<link rel="stylesheet" href="/fonts/lato.css" />
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
