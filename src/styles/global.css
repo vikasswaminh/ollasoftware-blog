@@ -4,8 +4,8 @@
   --accent-light: #eff6ff;
   --accent-pill: #2563eb;
   --orange: #1D6AF3;
-  --bg: #f4f7fb;
-  --bg-soft: #edf2f7;
+  --bg: linear-gradient(90deg, #f4f5f6 0%, #f6f6f6 50%, #faf9f6 100%);
+  --bg-soft: #f4f5f6;
   --bg-card: #ffffff;
   --border: #e2e8f0;
   --border-subtle: #edf2f7;
@@ -29,6 +29,7 @@ html {
   height: 100%;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  background: linear-gradient(90deg, #f4f5f6 0%, #f6f6f6 50%, #faf9f6 100%);
 }
 
 body {
@@ -37,7 +38,7 @@ body {
   flex-direction: column;
   margin: 0;
   font-family: var(--font);
-  background: var(--bg);
+  background: linear-gradient(90deg, #f4f5f6 0%, #f6f6f6 50%, #faf9f6 100%);
   color: var(--text);
   line-height: 1.65;
   font-size: 17px;
