@@ -1,9 +1,12 @@
 ---
 // SplashLoader.astro — animated intro splash screen
-// Triggers on initial site open, page reload/refresh, and logo tap
+// Triggers ONLY on:
+// 1. Initial site session open / web browser reload/refresh
+// 2. Tapping/clicking the brand logo
+// Does NOT trigger on regular page navigation (e.g., Tags, About, blog posts)
 ---
 
-<div id="splash-loader" class="splash-loader" aria-hidden="true" role="presentation">
+<div id="splash-loader" class="splash-loader hidden" style="display: none;" aria-hidden="true" role="presentation">
   <div class="splash-inner">
     <!-- Logo top -->
     <div class="splash-logo-wrap">
@@ -138,7 +141,7 @@
       splash.style.display = 'flex';
       splash.classList.remove('hidden');
 
-      var timer = setTimeout(function() {
+      setTimeout(function() {
         splash.classList.add('hidden');
         setTimeout(function() {
           splash.style.display = 'none';
@@ -146,13 +149,49 @@
       }, 950);
     }
 
-    // Play splash on initial load / refresh
-    playSplash();
+    function shouldShowSplash() {
+      try {
+        // 1. Check if user tapped logo (sessionStorage flag)
+        if (sessionStorage.getItem('trigger_splash') === 'true') {
+          sessionStorage.removeItem('trigger_splash');
+          return true;
+        }
 
-    // Re-trigger splash when clicking left brand logo
+        // 2. Check if this is a web browser reload/refresh
+        var navEntries = (window.performance && typeof window.performance.getEntriesByType === 'function')
+          ? window.performance.getEntriesByType('navigation')
+          : null;
+        if (navEntries && navEntries.length > 0) {
+          if (navEntries[0].type === 'reload') {
+            return true;
+          }
+        } else if (window.performance && window.performance.navigation && window.performance.navigation.type === 1) {
+          return true;
+        }
+
+        // 3. Check if initial session open (opening website for first time in tab)
+        if (!sessionStorage.getItem('site_visited_session')) {
+          sessionStorage.setItem('site_visited_session', 'true');
+          return true;
+        }
+      } catch (e) {
+        // Fallback safely if storage/performance unavailable
+      }
+      return false;
+    }
+
+    if (shouldShowSplash()) {
+      playSplash();
+    } else {
+      splash.style.display = 'none';
+      splash.classList.add('hidden');
+    }
+
+    // Global listener for tapping/clicking on the brand logo
     document.addEventListener('click', function(e) {
-      var brandLink = e.target.closest('a.brand');
+      var brandLink = e.target.closest('a.brand, .brand-logo-img, .brand-text-wrapper, .brand-col .brand');
       if (brandLink) {
+        sessionStorage.setItem('trigger_splash', 'true');
         playSplash();
       }
     });
