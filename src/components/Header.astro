@@ -2,6 +2,7 @@
 import AnimatedSearch from './AnimatedSearch.astro';
 
 const path = Astro.url.pathname;
+const isHome = path === '/' || path === '';
 const isBlogActive = path === '/' || path.startsWith('/blog/');
 const isTagsActive = path.startsWith('/tags');
 const isAboutActive = path.startsWith('/about');
@@ -9,7 +10,7 @@ const isAboutActive = path.startsWith('/about');
 
 <header class="site-header" id="site-header">
   <div class="header-inner">
-    <!-- Left: Brand Logo Image + ollasoftware (blue) + blog (blue) + Animated Search -->
+    <!-- Left: Brand Logo Image + ollasoftware (blue) + blog (blue) + Animated Search (Home page only) -->
     <div class="brand-left-group">
       <a class="brand" href="/" aria-label="OllaSoftware Blog Home">
         <img src="/logo.png" alt="OllaSoftware Logo" class="brand-logo-img" />
@@ -17,7 +18,7 @@ const isAboutActive = path.startsWith('/about');
           <span class="brand-name">ollasoftware</span><span class="brand-blog-text">blog</span>
         </span>
       </a>
-      {isBlogActive && <AnimatedSearch />}
+      {isHome && <AnimatedSearch />}
     </div>
 
     <!-- Right: Desktop Nav Links + CTA Button -->
