@@ -44,8 +44,14 @@ for (const x of jsonLd) allLd.push(x);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="OllaSoftware Team" />
+    <meta name="theme-color" content="#1d4ed8" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="msvalidate.01" content="6516B681F04AFFB5E3F0D7ED15EC4DF1" />
 
-    <!-- Google Fonts: Lato -->
+    <!-- DNS Prefetch & Google Fonts: Lato -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -60,10 +66,12 @@ for (const x of jsonLd) allLd.push(x);
     <link rel="canonical" href={canonical} />
 
     <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="article" />
@@ -71,7 +79,11 @@ for (const x of jsonLd) allLd.push(x);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImageAbs} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
     <meta property="og:site_name" content="OllaSoftware Blog" />
+    <meta property="og:locale" content="en_IN" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />

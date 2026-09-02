@@ -1,0 +1,22 @@
+{
+  "name": "OllaSoftware Blog",
+  "short_name": "Olla Blog",
+  "description": "Long-form 5,000-word brand deep-dives on every Olla product. Honest, technical, useful.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1d4ed8",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

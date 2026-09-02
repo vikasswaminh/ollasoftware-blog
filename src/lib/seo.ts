@@ -235,14 +235,27 @@ export function ldScript(obj: unknown): string {
 // powers Google's Article-rich-result eligibility. Stable @id is essential
 // for entity linking across the page's JSON-LD blocks.
 export function articleLd(args: {
-  slug: string;             // page slug under /top-10/
+  slug: string;             // page slug under /top-10/ or /blog/
   headline: string;
   description: string;
   datePublished: string;    // ISO date
   dateModified: string;     // ISO date
-  authorName?: string;      // defaults to org
+  authorName?: string;      // author name string
+  authorUrl?: string;       // optional author URL
 }) {
-  const url = `${SITE}/top-10/${args.slug}/`;
+  const url = `${SITE}/blog/${args.slug}/`;
+  const authorObj = args.authorName && args.authorName !== 'Ollasoftware' && args.authorName !== 'OllaSoftware Team'
+    ? {
+        '@type': 'Person',
+        name: args.authorName,
+        ...(args.authorUrl ? { url: args.authorUrl } : {}),
+      }
+    : {
+        '@type': 'Organization',
+        '@id': `${SITE}#organization`,
+        name: 'Ollasoftware',
+      };
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -253,11 +266,7 @@ export function articleLd(args: {
     datePublished: args.datePublished,
     dateModified: args.dateModified,
     inLanguage: 'en-IN',
-    author: {
-      '@type': 'Organization',
-      '@id': `${SITE}#organization`,
-      name: args.authorName ?? 'Ollasoftware',
-    },
+    author: authorObj,
     publisher: { '@id': `${SITE}#organization` },
     image: `${SITE}/og-image.png`,
     isAccessibleForFree: true,
