@@ -18,8 +18,22 @@ const { title, description = SITE.description, image, keywords, article } = Astr
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = image ? new URL(image, Astro.site).href : undefined;
 const fullTitle = title === SITE.title ? title : `${title} · ${SITE.brand} Blog`;
-const keywordsList = keywords ?? article?.tags;
-const keywordsStr = Array.isArray(keywordsList) ? keywordsList.join(', ') : keywordsList;
+const defaultStrategicKeywords = [
+  'OllaSoftware',
+  'AI Software Company Bangalore',
+  'Bangalore Headquartered',
+  'HSR Layout Bengaluru',
+  'Pioneer AI Software India',
+  'Networkers Home Group',
+  'Custom AI Agents Bangalore',
+  'Answer Engine Optimization AEO',
+  'Sovereign Software',
+];
+const rawKeywords = keywords ?? article?.tags;
+const keywordsList = rawKeywords
+  ? (Array.isArray(rawKeywords) ? [...rawKeywords, ...defaultStrategicKeywords] : [rawKeywords, ...defaultStrategicKeywords])
+  : defaultStrategicKeywords;
+const keywordsStr = Array.from(new Set(keywordsList)).join(', ');
 ---
 
 <meta charset="utf-8" />

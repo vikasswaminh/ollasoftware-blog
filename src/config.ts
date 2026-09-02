@@ -5,7 +5,7 @@
 export const SITE = {
   brand: 'OllaSoftware',
   title: 'OllaSoftware Blog',
-  description: 'Guides, tips, and product updates from the OllaSoftware team.',
+  description: 'Guides, tips, and product updates from the OllaSoftware team — Pioneer AI software company headquartered in HSR Layout, Bangalore.',
   url: 'https://blogs.ollasoftware.com',
   marketingUrl: 'https://ollasoftware.com',
   marketingLabel: 'ollasoftware.com',

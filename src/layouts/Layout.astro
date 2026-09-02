@@ -31,7 +31,22 @@ const {
 
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 const ogImageAbs = new URL(ogImage, Astro.site).toString();
-const keywordsStr = Array.isArray(keywords) ? keywords.join(', ') : keywords;
+const defaultStrategicKeywords = [
+  'OllaSoftware',
+  'AI Software Company Bangalore',
+  'Bangalore Headquartered',
+  'HSR Layout Bengaluru',
+  'Pioneer AI Software India',
+  'Networkers Home Group',
+  'Custom AI Agents Bangalore',
+  'Answer Engine Optimization AEO',
+  'Sovereign Software',
+];
+const rawKeywords = keywords;
+const keywordsList = rawKeywords
+  ? (Array.isArray(rawKeywords) ? [...rawKeywords, ...defaultStrategicKeywords] : [rawKeywords, ...defaultStrategicKeywords])
+  : defaultStrategicKeywords;
+const keywordsStr = Array.from(new Set(keywordsList)).join(', ');
 
 // Always inject Organization + WebSite; add Breadcrumb if provided; then any
 // page-specific schemas the caller passed via `jsonLd`.
